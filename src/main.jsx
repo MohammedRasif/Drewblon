@@ -9,6 +9,8 @@ import UserDashboardLayout from "./component/UserDashboard/UserDashboardLayout/U
 import Dashboard from "./component/UserDashboard/UserDashboardPages/Dashboard.jsx";
 import Login from "./component/Pages/Login.jsx";
 import Register from "./component/Pages/register.jsx";
+import EmailVerification from "./component/Pages/EmailVerification.jsx";
+import Verification from "./component/Pages/Verification.jsx";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +31,14 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element:<Register></Register>
+  },
+  {
+    path: "/email_verification",
+    element:<EmailVerification></EmailVerification>
+  },
+  {
+    path: "/verification",
+    element:<Verification></Verification>
   },
 
   {
