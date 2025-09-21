@@ -13,6 +13,7 @@ import EmailVerification from "./component/Pages/EmailVerification.jsx";
 import Verification from "./component/Pages/Verification.jsx";
 import ForgetPassword from "./component/Pages/forgetPassword.jsx";
 import SetNewPassword from "./component/Pages/SetNewPassword.jsx";
+import Pricing from "./component/Pages/Pricing.jsx";
 
 const router = createBrowserRouter([
   {
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
   {
     path: "/set_new_password",
     element:<SetNewPassword></SetNewPassword>
+  },
+  {
+    path: "/pricing",
+    element:<Pricing></Pricing>
   },
 
   {

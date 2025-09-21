@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import img from "../../image/cuate.png";
+import img from "../../image/amico.png";
 import { NavLink } from "react-router-dom";
 
 function Register() {

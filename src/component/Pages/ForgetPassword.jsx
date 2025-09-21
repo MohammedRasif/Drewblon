@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "../../image/cuate.png";
+import Image from "../../image/rafiki.png";
 import { NavLink } from "react-router-dom";
 
 function ForgetPassword() {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import img from "../../image/cuate.png";
+import img from "../../image/rafikiasdf.png";
 
 function SetNewPassword() {
   const [showNewPassword, setShowNewPassword] = useState(false);

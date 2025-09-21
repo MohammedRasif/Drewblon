@@ -42,7 +42,7 @@ const UserDashboardLayout = () => {
       {/* Mobile Menu Toggle Button */}
       <button
         onClick={toggleSidebar}
-        className="lg:hidden fixed top-4 left-4 z-50 bg-[#20325A] dark:bg-[#1E232E] text-white p-2 rounded-md"
+        className="lg:hidden fixed top-4 left-4 z-50 bg-[#FAFAFA]   p-2 rounded-md"
         aria-label="Toggle menu"
       >
         <Menu size={24} />
@@ -50,12 +50,12 @@ const UserDashboardLayout = () => {
 
       {/* Overlay for mobile when sidebar is open */}
       {isMobile && isSidebarOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={() => setIsSidebarOpen(false)} />
+        <div className="fixed inset-0 bg-[#FAFAFA] bg-opacity-50 z-40" onClick={() => setIsSidebarOpen(false)} />
       )}
 
       {/* Sidebar */}
       <div
-        className={`bg-[#20325A] dark:bg-[#1E232E] h-full fixed z-50 transition-all duration-300 ease-in-out ${
+        className={`bg-[#FAFAFA]  h-full fixed z-50 transition-all duration-300 ease-in-out ${
           isSidebarOpen ? "w-72 translate-x-0" : "w-0 -translate-x-full lg:translate-x-0 lg:w-16"
         }`}
       >
@@ -73,7 +73,7 @@ const UserDashboardLayout = () => {
       >
         {/* Navbar - Fixed & Only Navbar BG White */}
         <div
-          className="fixed top-0 z-30  bg-white dark:bg-[#1E232E] w-full border-b border-gray-200 dark:border-gray-600 transition-all duration-300 ease-in-out"
+          className="fixed top-0 z-30  bg-[#FAFAFA]  w-full  "
           style={{
             left: isMobile ? "0" : isSidebarOpen ? "288px" : "64px",
             width: isMobile ? "100%" : isSidebarOpen ? "calc(100% - 288px)" : "calc(100% - 64px)",
@@ -84,7 +84,7 @@ const UserDashboardLayout = () => {
         </div>
 
         {/* Outlet (Main Content) */}
-        <div className="h-full mt-16 overflow-auto bg-[#F7F9FF] dark:bg-[#252c3b] p-4">
+        <div className="h-full pt-16 overflow-auto bg-[#FAFAFA] ">
           <Outlet />
         </div>
       </div>

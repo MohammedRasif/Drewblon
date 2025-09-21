@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "../../image/cuate.png";
+import Image from "../../image/adfadf.png";
 import { NavLink } from "react-router-dom";
 
 function Verification() {
