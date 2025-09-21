@@ -8,6 +8,7 @@ import Home from "./component/Home/Home.jsx";
 import UserDashboardLayout from "./component/UserDashboard/UserDashboardLayout/UserDashboardLayout.jsx";
 import Dashboard from "./component/UserDashboard/UserDashboardPages/Dashboard.jsx";
 import Login from "./component/Pages/Login.jsx";
+import Register from "./component/Pages/register.jsx";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element:<Login></Login>
+  },
+  {
+    path: "/register",
+    element:<Register></Register>
   },
 
   {
