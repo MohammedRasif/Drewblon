@@ -1,3 +1,6 @@
+import { FaVideo } from "react-icons/fa";
+import { MdAccessTimeFilled } from "react-icons/md";
+
 const Dashboard = () => {
   // Sample data matching the image
   const overviewStats = [
@@ -254,10 +257,10 @@ const Dashboard = () => {
               <tbody>
                 {leaderboardData.map((row, index) => (
                   <tr key={index} className="bg-white ">
-                    <td className="py-4 px-4 text-sm text-gray-900">
+                    <td className="py-3 px-4 text-sm text-gray-900">
                       {row.rank}
                     </td>
-                    <td className="py-4 px-4">
+                    <td className="py-3 px-4">
                       <div className="flex items-center space-x-3">
                         <img
                           src={row.avatar || "/placeholder.svg"}
@@ -269,22 +272,24 @@ const Dashboard = () => {
                         </span>
                       </div>
                     </td>
-                    <td className="py-4 px-4 text-sm text-gray-600">
+                    <td className="py-3 px-4 text-sm text-gray-600">
                       {row.score}
                     </td>
-                    <td className="py-4 px-4 text-sm text-gray-600">
+                    <td className="py-3 px-4 text-sm text-gray-600">
                       <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                        <MdAccessTimeFilled />
+
                         <span>{row.learningTime}</span>
                       </div>
                     </td>
-                    <td className="py-4 px-4 text-sm text-gray-600">
+                    <td className="py-3 px-4 text-sm text-gray-600">
                       <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
+                        <FaVideo />
+
                         <span>{row.completedVideo}</span>
                       </div>
                     </td>
-                    <td className="py-4 px-4 text-sm text-gray-600">
+                    <td className="py-3 px-4 text-sm text-gray-600">
                       <div className="flex items-center space-x-2">
                         <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
                         <span>{row.totalPoint}</span>
