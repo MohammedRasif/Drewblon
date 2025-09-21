@@ -11,6 +11,8 @@ import Login from "./component/Pages/Login.jsx";
 import Register from "./component/Pages/register.jsx";
 import EmailVerification from "./component/Pages/EmailVerification.jsx";
 import Verification from "./component/Pages/Verification.jsx";
+import ForgetPassword from "./component/Pages/forgetPassword.jsx";
+import SetNewPassword from "./component/Pages/SetNewPassword.jsx";
 
 const router = createBrowserRouter([
   {
@@ -39,6 +41,14 @@ const router = createBrowserRouter([
   {
     path: "/verification",
     element:<Verification></Verification>
+  },
+  {
+    path: "/fotget_password",
+    element:<ForgetPassword></ForgetPassword>
+  },
+  {
+    path: "/set_new_password",
+    element:<SetNewPassword></SetNewPassword>
   },
 
   {
