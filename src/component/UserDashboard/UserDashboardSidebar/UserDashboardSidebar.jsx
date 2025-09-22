@@ -13,7 +13,7 @@ const UserDashboardSidebar = () => {
     {
       id: "profile",
       label: "Profile",
-      path: "/dashboard/profile",
+      path: "/dashboard",
       icon: (
         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
           <path
@@ -78,14 +78,12 @@ const UserDashboardSidebar = () => {
     },
   ];
 
-  // Current path থেকে active item সেট করার জন্য
   const getActiveItemFromPath = () => {
     const currentPath = location.pathname;
     const foundItem = menuItems.find((item) => item.path === currentPath);
     return foundItem ? foundItem.id : "profile";
   };
 
-  // Component mount হলে active item update করা
   useEffect(() => {
     const newActiveItem = getActiveItemFromPath();
     if (newActiveItem !== activeItem) {

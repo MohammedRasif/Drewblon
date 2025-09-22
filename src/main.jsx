@@ -14,6 +14,8 @@ import Verification from "./component/Pages/Verification.jsx";
 import ForgetPassword from "./component/Pages/forgetPassword.jsx";
 import SetNewPassword from "./component/Pages/SetNewPassword.jsx";
 import Pricing from "./component/Pages/Pricing.jsx";
+import DashboardFeed from "./component/UserDashboard/UserDashboardPages/DashboardFeed.jsx";
+import DashboardProfileEdit from "./component/UserDashboard/UserDashboardPages/DashboardProfileEdit.jsx";
 
 const router = createBrowserRouter([
   {
@@ -29,33 +31,32 @@ const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element:<Login></Login>
+    element: <Login></Login>,
   },
   {
     path: "/register",
-    element:<Register></Register>
+    element: <Register></Register>,
   },
   {
     path: "/email_verification",
-    element:<EmailVerification></EmailVerification>
+    element: <EmailVerification></EmailVerification>,
   },
   {
     path: "/verification",
-    element:<Verification></Verification>
+    element: <Verification></Verification>,
   },
   {
     path: "/fotget_password",
-    element:<ForgetPassword></ForgetPassword>
+    element: <ForgetPassword></ForgetPassword>,
   },
   {
     path: "/set_new_password",
-    element:<SetNewPassword></SetNewPassword>
+    element: <SetNewPassword></SetNewPassword>,
   },
   {
     path: "/pricing",
-    element:<Pricing></Pricing>
+    element: <Pricing></Pricing>,
   },
-
   {
     path: "/dashboard",
     element: <UserDashboardLayout />,
@@ -63,6 +64,14 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Dashboard />,
+      },
+      {
+        path: "/dashboard/feed",
+        element: <DashboardFeed />,
+      },
+      {
+        path: "/dashboard/EditProfile",
+        element: <DashboardProfileEdit />,
       },
     ],
   },

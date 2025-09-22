@@ -1,5 +1,6 @@
 import { FaVideo } from "react-icons/fa";
 import { MdAccessTimeFilled } from "react-icons/md";
+import { NavLink } from "react-router-dom";
 
 const Dashboard = () => {
   // Sample data matching the image
@@ -128,21 +129,23 @@ const Dashboard = () => {
                 <p className="text-[16px] text-gray-500">vn@gmail.com</p>
               </div>
             </div>
-            <button className="text-gray-400 hover:text-gray-600">
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                />
-              </svg>
-            </button>
+            <NavLink to="/dashboard/EditProfile">
+              <button className="text-gray-400 hover:text-gray-600 cursor-pointer">
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                  />
+                </svg>
+              </button>
+            </NavLink>
           </div>
 
           <div className="space-y-4">
