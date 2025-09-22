@@ -1,48 +1,37 @@
 import React, { useState } from "react";
+import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 
 function DashbaordProfile() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   return (
-    <div className="bg-white rounded-lg p-6">
+    <div className="rounded-lg p-4 max-w-3xl">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
-          <button className="text-gray-400 hover:text-gray-600">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="m15 18-6-6 6-6" />
-            </svg>
-          </button>
-          <h1 className="text-xl font-semibold text-gray-900">
+          <h1 className="text-[20px] font-semibold text-gray-900">
             Personal Information
           </h1>
         </div>
-        <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium">
+        <button className="bg-[#3565FC] hover:bg-blue-600 text-white px-8 py-3 rounded-full font-medium text-[16px] cursor-pointer">
           Update
         </button>
       </div>
 
       {/* Profile Picture Section */}
       <div className="flex items-center gap-4 mb-8">
-        <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200">
+        <div className="w-[72px] h-[72px] rounded-full overflow-hidden bg-gray-200">
           <img
-            src="/profile-picture-of-a-person.jpg"
+            src="https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529179/cld-sample.jpg"
             alt="Profile"
             className="w-full h-full object-cover"
           />
         </div>
-        <div className="flex gap-3">
-          <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+        <div className="flex gap-5">
+          <button className="bg-[#3565FC] hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-[14px] font-medium cursor-pointer">
             Change picture
           </button>
-          <button className="text-red-500 hover:text-red-600 text-sm font-medium">
+          <button className="text-red-500 hover:text-red-600 text-[14px] font-medium border px-4 py-2 rounded-lg cursor-pointer">
             Delete picture
           </button>
         </div>
@@ -53,7 +42,7 @@ function DashbaordProfile() {
         {/* Name Fields */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-[14px] font-medium text-gray-700 mb-2">
               First name
             </label>
             <input
@@ -63,7 +52,7 @@ function DashbaordProfile() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-[14px] font-medium text-gray-700 mb-2">
               Last name
             </label>
             <input
@@ -76,39 +65,22 @@ function DashbaordProfile() {
 
         {/* Education Institute */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-[14px] font-medium text-gray-700 mb-2">
             Name of education institute
           </label>
-          <input
-            type="text"
-            defaultValue="Brook School"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
+          <h1 className="text-[16px] text-[#525252]">Brack school</h1>
         </div>
 
         {/* Email */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-[14px] font-medium text-gray-700 mb-2">
             Email
           </label>
           <div className="relative">
-            <input
-              type="email"
-              defaultValue="xyz@gmail.com"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
-            />
+            <h1 className="text-[16px] text-[#525252]">ed@gmail.com</h1>
             <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                className="text-green-500"
-              >
-                <path d="M20 6L9 17l-5-5" />
-              </svg>
+              <IoMdCheckmarkCircleOutline size={24} className="text-green-600" />
+
             </div>
           </div>
         </div>
@@ -127,7 +99,7 @@ function DashbaordProfile() {
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
-                  defaultValue="••••••••"
+                 
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
                 />
                 <button
@@ -157,7 +129,7 @@ function DashbaordProfile() {
               <div className="relative">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
-                  defaultValue="••••••••"
+                 
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
                 />
                 <button

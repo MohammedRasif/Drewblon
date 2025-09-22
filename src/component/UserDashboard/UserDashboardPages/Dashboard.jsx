@@ -81,7 +81,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="">
+    <div className=" pb-8">
       <div className="container mx-auto space-y-6">
         {/* Overview Section */}
         <div className=" rounded-lg  ">

@@ -4,6 +4,8 @@ import { useState } from "react";
 import DashbaordProfile from "./DashbaordProfile";
 import DashbaordInterst from "./DashbaordInterst";
 import DashboardSubscritpion from "./DashboardSubscritpion";
+import { BiArrowBack } from "react-icons/bi";
+import { NavLink } from "react-router-dom";
 
 function DashboardProfileEdit() {
   const [activeTab, setActiveTab] = useState("personal");
@@ -44,6 +46,10 @@ function DashboardProfileEdit() {
       <div className="flex gap-5 container mx-auto py-4">
         {/* Sidebar */}
         <div className="w-1/6">
+          <div className="flex ">
+            <NavLink to="/dashboard">
+            <BiArrowBack  size={24} className="mt-[24px] hover:text-[#615FFF]"/>
+          </NavLink>
           <div className=" rounded-lg p-4">
             <nav className="space-y-2">
               {tabs.map((tab) => (
@@ -60,6 +66,7 @@ function DashboardProfileEdit() {
                 </button>
               ))}
             </nav>
+          </div>
           </div>
         </div>
 
