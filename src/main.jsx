@@ -16,6 +16,7 @@ import SetNewPassword from "./component/Pages/SetNewPassword.jsx";
 import Pricing from "./component/Pages/Pricing.jsx";
 import DashboardFeed from "./component/UserDashboard/UserDashboardPages/DashboardFeed.jsx";
 import DashboardProfileEdit from "./component/UserDashboard/UserDashboardPages/DashboardProfileEdit.jsx";
+import DashboardTalks from "./component/UserDashboard/UserDashboardPages/DashboardTalks.jsx";
 
 const router = createBrowserRouter([
   {
@@ -72,6 +73,10 @@ const router = createBrowserRouter([
       {
         path: "/dashboard/EditProfile",
         element: <DashboardProfileEdit />,
+      },
+      {
+        path: "/dashboard/talks",
+        element: <DashboardTalks />,
       },
     ],
   },
