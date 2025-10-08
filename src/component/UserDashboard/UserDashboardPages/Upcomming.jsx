@@ -482,7 +482,7 @@ function Upcomming() {
   );
 
   return (
-    <div className="flex gap-6 p-6 bg-gray-50 min-h-screen">
+    <div className="flex gap-6  bg-gray-50 min-h-screen">
       {/* Left side - All Livestream cards (no filter) */}
       <div className="flex-1">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -495,7 +495,7 @@ function Upcomming() {
       {/* Right side - Calendar and filtered lists for selected date */}
       <div className="w-80 flex-shrink-0">
         {/* Calendar */}
-        <div className="bg-white rounded-lg p-4 mb-6 border border-gray-200 -mt-52">
+        <div className="bg-white rounded-lg p-4 mb-6 border border-gray-200 -mt-46">
           {renderCalendar()}
         </div>
 

@@ -51,7 +51,7 @@ const UserDashboardSidebar = () => {
     {
       id: "videos",
       label: "Videos",
-      path: "/dashboard/videos",
+      path: "/dashboard/video",
       icon: (
         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
           <path
@@ -80,6 +80,11 @@ const UserDashboardSidebar = () => {
 
   const getActiveItemFromPath = () => {
     const currentPath = location.pathname;
+    // Check if the current path starts with /dashboard/details to highlight "videos"
+    if (currentPath.startsWith("/dashboard/details")) {
+      return "videos";
+    }
+    // Otherwise, find the menu item that matches the current path
     const foundItem = menuItems.find((item) => item.path === currentPath);
     return foundItem ? foundItem.id : "profile";
   };
@@ -97,7 +102,7 @@ const UserDashboardSidebar = () => {
   };
 
   return (
-    <div className="w-64 h-screen  shadow-lg">
+    <div className="w-64 h-screen shadow-lg">
       {/* Logo Section */}
       <div className="flex justify-center items-center pt-5 pb-10">
         <img src={img} alt="Logo" className="h-8" />

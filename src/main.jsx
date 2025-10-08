@@ -17,6 +17,8 @@ import Pricing from "./component/Pages/Pricing.jsx";
 import DashboardFeed from "./component/UserDashboard/UserDashboardPages/DashboardFeed.jsx";
 import DashboardProfileEdit from "./component/UserDashboard/UserDashboardPages/DashboardProfileEdit.jsx";
 import DashboardTalks from "./component/UserDashboard/UserDashboardPages/DashboardTalks.jsx";
+import DashboardVideos from "./component/UserDashboard/UserDashboardPages/DashboardVideos.jsx";
+import DashboardVideoDetails from "./component/UserDashboard/UserDashboardPages/DashboardVideoDetails.jsx";
 
 const router = createBrowserRouter([
   {
@@ -77,6 +79,14 @@ const router = createBrowserRouter([
       {
         path: "/dashboard/talks",
         element: <DashboardTalks />,
+      },
+      {
+        path: "/dashboard/video",
+        element: <DashboardVideos />,
+      },
+      {
+        path: "/dashboard/details/:id",
+        element: <DashboardVideoDetails />,
       },
     ],
   },

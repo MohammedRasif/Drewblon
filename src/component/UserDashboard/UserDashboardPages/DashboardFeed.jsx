@@ -56,7 +56,8 @@ function DashboardFeed() {
       comments: 7,
       likes: 12,
       hasImage: true,
-      image: "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529179/samples/woman-on-a-football-field.jpg",
+      image:
+        "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529179/samples/woman-on-a-football-field.jpg",
     },
   ];
 
@@ -147,7 +148,7 @@ function DashboardFeed() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 ">
+    <div className=" bg-gray-50 pr-5">
       <div className="container mx-auto">
         {/* Search Bar */}
         <div className="relative mb-6">

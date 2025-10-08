@@ -81,7 +81,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className=" pb-8">
+    <div className=" pr-5 pb-8">
       <div className="container mx-auto space-y-6">
         {/* Overview Section */}
         <div className=" rounded-lg  ">
@@ -129,7 +129,7 @@ const Dashboard = () => {
                 <p className="text-[16px] text-gray-500">vn@gmail.com</p>
               </div>
             </div>
-            <NavLink to="/dashboard/EditProfile">
+            {/* <NavLink to="">
               <button className="text-gray-400 hover:text-gray-600 cursor-pointer">
                 <svg
                   className="w-5 h-5"
@@ -145,7 +145,7 @@ const Dashboard = () => {
                   />
                 </svg>
               </button>
-            </NavLink>
+            </NavLink> */}
           </div>
 
           <div className="space-y-4">

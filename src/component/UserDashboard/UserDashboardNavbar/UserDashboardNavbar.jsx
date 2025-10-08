@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { GoChevronDown } from "react-icons/go";
 import { IoNotificationsOutline } from "react-icons/io5";
+import { NavLink } from "react-router-dom";
 
 const UserDashboardNavbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -54,7 +55,8 @@ const UserDashboardNavbar = () => {
         {isDropdownOpen && (
           <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
             <div className="py-2">
-              <button
+              <NavLink to="/dashboard/EditProfile">
+                <button
                 className="w-full text-left px-4 py-2 text-gray-700 font-semibold hover:bg-gray-50 transition-colors cursor-pointer"
                 onClick={() => {
                   setIsDropdownOpen(false);
@@ -63,6 +65,7 @@ const UserDashboardNavbar = () => {
               >
                 Settings
               </button>
+              </NavLink>
               <button
                 className="w-full text-left px-4 py-2 text-gray-700 font-semibold hover:bg-gray-50 transition-colors cursor-pointer"
                 onClick={() => {

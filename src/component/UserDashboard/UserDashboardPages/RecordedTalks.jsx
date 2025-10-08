@@ -130,7 +130,7 @@ function RecordedTalks({ selectedCategory }) {
             </div>
 
             {/* Title and Description */}
-            <h3 className="text-lg font-bold text-gray-900 mb-2 leading-tight">
+            <h3 className="text-[20px] font-bold text-gray-900 mb-2 leading-tight">
               {talk.title}
             </h3>
             <p className="text-sm text-gray-600 leading-relaxed">

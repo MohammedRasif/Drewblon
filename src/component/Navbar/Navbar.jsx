@@ -1,68 +1,47 @@
-import { useState } from 'react';
+import React from "react";
+import { NavLink } from "react-router-dom"; // Import NavLink for active state
+import image from "../../image/Frame 11.png";
 
-const Navbar = () => {
-    const [activeItem, setActiveItem] = useState('Home');
+function Navbar() {
+  return (
+    <div className="flex items-center justify-between container mx-auto py-2 poppins">
+      <div>
+        <img src={image} alt="Logo" />
+      </div>
 
-    const handleClick = (item) => {
-        setActiveItem(item);
-        // Add navigation logic here (e.g., using React Router)
-    };
+      <div className="flex items-center space-x-4">
+        <NavLink
+          to="/about"
+          className={({ isActive }) =>
+            `text-[15px] font-semibold transition-all duration-300 hover:text-blue-500 hover:underline hover:underline-offset-4 ${
+              isActive ? "text-gray-800" : "text-gray-600"
+            }`
+          }
+        >
+          About
+        </NavLink>
+        <NavLink
+          to="/pricing"
+          className={({ isActive }) =>
+            `text-[15px] font-semibold transition-all duration-300 hover:text-blue-500 hover:underline hover:underline-offset-4 ${
+              isActive ? "text-gray-800" : "text-gray-600"
+            }`
+          }
+        >
+          Pricing
+        </NavLink>
+      </div>
 
-    return (
-        <nav className="bg-[#312D46] py-2  text-white ">
-            <div className='flex items-center justify-between container mx-auto'>
-                <div>
-                    <h1 className="ml-5 text-[26px]">logo</h1>
-                </div>
-                <div className="flex items-center py-1 text-[20px] font-medium">
-                    <button
-                        onClick={() => handleClick('Home')}
-                        className={`px-4 py-[5px] mx-1 rounded ${activeItem === 'Home' ? 'bg-[#4F46E5] cursor-pointer text-white shadow-2xl ' : 'bg-transparent text-white hover:bg-blue-600'}`}
-                    >
-                        Home
-                    </button>
-                    <button
-                        onClick={() => handleClick('Service')}
-                        className={`px-4 py-[5px] mx-1 rounded ${activeItem === 'Service' ? 'bg-[#4F46E5] cursor-pointer text-white ' : 'bg-transparent text-white hover:bg-blue-600'}`}
-                    >
-                        Service
-                    </button>
-                    <button
-                        onClick={() => handleClick('Pricing')}
-                        className={`px-4 py-[5px] mx-1 rounded ${activeItem === 'Pricing' ? 'bg-[#4F46E5] cursor-pointer text-white ' : 'bg-transparent text-white hover:bg-blue-600'}`}
-                    >
-                        Pricing
-                    </button>
-                    <button
-                        onClick={() => handleClick('Why us')}
-                        className={`px-4 py-[5px] mx-1 rounded ${activeItem === 'Why us' ? 'bg-[#4F46E5] cursor-pointer text-white ' : 'bg-transparent text-white hover:bg-blue-600'}`}
-                    >
-                        Why us
-                    </button>
-                    <button
-                        onClick={() => handleClick('Reviews')}
-                        className={`px-4 py-[5px] mx-1 rounded ${activeItem === 'Reviews' ? 'bg-[#4F46E5] cursor-pointer text-white ' : 'bg-transparent text-white hover:bg-blue-600'}`}
-                    >
-                        Reviews
-                    </button>
-                </div>
-                <div className='text-[19px]'>
-                    <button
-                        onClick={() => handleClick('Register')}
-                        className={`px-4 py-[5px] mx-1 rounded hover:bg-[#4F46E5] font-medium cursor-pointer text-white border hover:border-gray-700`}
-                    >
-                        login
-                    </button>
-                    <button
-                        onClick={() => handleClick('Register')}
-                        className={`px-4 py-[5px] mx-1 rounded hover:bg-[#4F46E5] font-medium cursor-pointer text-white border hover:border-gray-700`}
-                    >
-                        Register
-                    </button>
-                </div>
-            </div>
-        </nav>
-    );
-};
+      <div className="space-x-4">
+        <button className="bg-[#407BFF] text-white py-2 px-3 rounded-md hover:bg-blue-600 transition-colors duration-300">
+          Sign in
+        </button>
+        <button className="bg-[#407BFF] text-white py-2 px-3 rounded-md hover:bg-blue-600 transition-colors duration-300">
+          Sign up
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default Navbar;
