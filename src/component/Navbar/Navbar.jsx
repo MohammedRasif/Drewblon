@@ -8,7 +8,6 @@ function Navbar() {
       <div>
         <img src={image} alt="Logo" />
       </div>
-
       <div className="flex items-center space-x-4">
         <NavLink
           to="/about"
@@ -33,7 +32,7 @@ function Navbar() {
       </div>
 
       <div className="space-x-4">
-        <button className="bg-[#407BFF] text-white py-2 px-3 rounded-md hover:bg-blue-600 transition-colors duration-300">
+        <button className=" text-black   py-2 px-3 rounded-md hover:bg-blue-600 transition-colors duration-300">
           Sign in
         </button>
         <button className="bg-[#407BFF] text-white py-2 px-3 rounded-md hover:bg-blue-600 transition-colors duration-300">
