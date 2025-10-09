@@ -10,13 +10,13 @@ function Successd() {
         <div className="mb-10">
           <div>
             <hr className="w-8 md:w-10 h-1 "/>
-            <span className="text-sm opacity-70">Features</span>
+            <span className="text-[18px] opacity-70">Features</span>
           </div>
           <div className="flex flex-col md:flex-row justify-between items-center">
             <h1 className="text-[48px] mt-2 max-w-full md:max-w-md md:w-1/2">
               Everything You Need to Succeed
             </h1>
-            <p className="text-base max-w-full md:max-w-xl mt-4 md:mt-2 md:w-1/2 text-gray-200">
+            <p className="text-[16px] max-w-full md:max-w-xl mt-4 md:mt-2 md:w-1/2 text-gray-200">
               Gain valuable insights from industry leaders through on-demand
               videos and interactive live sessions. Learn real-world skills,
               explore different career paths, and get practical advice tailored
