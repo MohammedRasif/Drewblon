@@ -9,10 +9,10 @@ function Discover() {
 
 
       {/* Main Content Grid */}
-      <div className="container py-16 md:py-24 lg:py-32  mx-auto flex flex-col lg:flex-row items-center justify-between relative z-10">
+      <div className="container py-16 md:py-24 lg:py-28  mx-auto flex flex-col lg:flex-row items-center justify-between relative z-10">
         
         {/* Left Side: Text Content */}
-        <div className="lg:w-1/2 text-center lg:text-left mb-12 lg:mb-0">
+        <div className="lg:w-1/2 text-center lg:text-left mb-12 lg:mb-10">
           <h1 className="lg:text-[48px] font-semibold text-gray-800 leading-tight mb-4 max-w-lg mx-auto lg:mx-0">
             Discover the Future of Career Guidance
           </h1>

@@ -21,7 +21,7 @@ function Vision() {
           </div>
 
           {/* Vision Title */}
-          <h2 className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-6">
+          <h2 className="text-4xl md:text-5xl font-medium text-[#000000] leading-tight lg:pb-3">
             Our Vision for <br /> Students
           </h2>
 

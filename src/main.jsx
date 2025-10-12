@@ -19,6 +19,7 @@ import DashboardProfileEdit from "./component/UserDashboard/UserDashboardPages/D
 import DashboardTalks from "./component/UserDashboard/UserDashboardPages/DashboardTalks.jsx";
 import DashboardVideos from "./component/UserDashboard/UserDashboardPages/DashboardVideos.jsx";
 import DashboardVideoDetails from "./component/UserDashboard/UserDashboardPages/DashboardVideoDetails.jsx";
+import About from "./component/Pages/About.jsx";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
+      },
+      {
+        path: "/about",
+        element: <About />,
       },
     ],
   },

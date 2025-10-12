@@ -1,3 +1,4 @@
+import About from "../Pages/About";
 import Banner from "../Pages/banner";
 import Discover from "../Pages/Discover";
 import Education from "../Pages/Education";
@@ -9,6 +10,7 @@ const Home = () => {
     return (
         <div className="poppins">
             <Banner></Banner>
+            <About></About>
             <Improve/>
             <Vision/>
             <Education/>

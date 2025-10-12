@@ -58,7 +58,7 @@ function Navbar() {
     <div className="flex items-center justify-between container mx-auto py-4 poppins relative z-60">
       {/* Logo */}
       <div>
-        <img src={image} alt="Logo" />
+        <img src={image} className="h-10" alt="Logo" />
       </div>
 
       {/* Desktop Navigation */}
@@ -88,7 +88,7 @@ function Navbar() {
             </motion.div>
           )}
         </NavLink>
-        <NavLink
+        {/* <NavLink
           to="/pricing"
           className={({ isActive }) =>
             `relative text-[18px] font-semibold ${
@@ -112,7 +112,7 @@ function Navbar() {
               />
             </motion.div>
           )}
-        </NavLink>
+        </NavLink> */}
       </div>
 
       {/* Desktop Buttons */}
@@ -121,7 +121,7 @@ function Navbar() {
           variants={buttonVariants}
           initial="initial"
           whileHover="hover"
-          className="text-black py-2 px-3 rounded-md"
+          className="text-black py-2 px-3 rounded-md lg:text-[18px]"
         >
           Sign in
         </motion.button>
@@ -129,7 +129,7 @@ function Navbar() {
           variants={buttonVariants}
           initial="initial"
           whileHover="hover"
-          className="bg-[#407BFF] text-white py-2 px-3 rounded-md"
+          className="bg-[#407BFF] text-white py-2 px-3 rounded-md lg:text-[18px]"
         >
           Sign up
         </motion.button>
@@ -147,7 +147,7 @@ function Navbar() {
       </div>
 
       {/* Mobile Side Menu */}
-      <AnimatePresence >
+      <AnimatePresence>
         {isMenuOpen && (
           <motion.div
             variants={menuVariants}

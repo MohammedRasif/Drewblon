@@ -8,7 +8,7 @@ function Improve() {
   return (
     <div className="poppins">
       {/* Main Section */}
-      <div className="container mx-auto mt-10 md:mt-20 lg:mt-96 px-4 flex flex-col md:flex-row items-center justify-between gap-8">
+      <div className="container mx-auto mt-10 md:mt-20  px-4 flex flex-col md:flex-row items-center justify-between gap-8">
         {/* Image Section */}
         <div className="w-full md:w-1/2">
           <img
@@ -23,7 +23,7 @@ function Improve() {
             <hr className="w-8 md:w-10 h-1 bg-gray-800" />
             <span className="text-xs md:text-sm opacity-70">Features</span>
           </div>
-          <h1 className="text-2xl md:text-3xl lg:text-[48px] font-semibold py-3 md:py-5">
+          <h1 className="text-4xl md:text-5xl font-medium text-[#000000] leading-tight py-3 md:py-5">
             Track Your Growth. Compete. Improve.
           </h1>
           <p className="text-sm md:text-[17px] text-[#525252]">
@@ -46,27 +46,27 @@ function Improve() {
         <Marquee speed={50} gradient={false} className="py-3 md:py-4">
           {[
             {
-              icon: <FaSlack size={24} className="mr-2 md:mr-3" />,
+              icon: <FaSlack size={44} className="mr-2 md:mr-3" />,
               text: "Slack",
             },
             {
-              icon: <FaSlack size={24} className="mr-2 md:mr-3" />,
+              icon: <FaSlack size={44} className="mr-2 md:mr-3" />,
               text: "HubSpot",
             },
             {
-              icon: <FaRegSquareMinus size={24} className="mr-2 md:mr-3" />,
+              icon: <FaRegSquareMinus size={44} className="mr-2 md:mr-3" />,
               text: "Square",
             },
             {
-              icon: <GiKingJuMask size={24} className="mr-2 md:mr-3" />,
+              icon: <GiKingJuMask size={44} className="mr-2 md:mr-3" />,
               text: "Service",
             },
             {
-              icon: <FaSlack size={24} className="mr-2 md:mr-3" />,
+              icon: <FaSlack size={44} className="mr-2 md:mr-3" />,
               text: "Conji_ant",
             },
             {
-              icon: <FaSlack size={24} className="mr-2 md:mr-3" />,
+              icon: <FaSlack size={44} className="mr-2 md:mr-3" />,
               text: "Grubhub",
             },
           ].map((item, index) => (
@@ -75,7 +75,7 @@ function Improve() {
               className="text-lg md:text-2xl lg:text-5xl font-semibold text-[#64626A] flex items-center space-x-2 md:space-x-3 mx-4 md:mx-8 lg:mx-10"
             >
               {item.icon}
-              <span >{item.text}</span>
+              <span>{item.text}</span>
             </div>
           ))}
         </Marquee>
