@@ -1,4 +1,5 @@
 import Banner from "../Pages/banner";
+import Discover from "../Pages/Discover";
 import Education from "../Pages/Education";
 import Improve from "../Pages/Improve";
 import Vision from "../Pages/Vision";
@@ -11,6 +12,7 @@ const Home = () => {
             <Improve/>
             <Vision/>
             <Education/>
+            <Discover/>
         </div>
     );
 }

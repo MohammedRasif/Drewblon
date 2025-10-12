@@ -29,7 +29,7 @@ function Successd() {
             <div className="bg-[#D1E8FF] rounded-full p-2 inline-block text-[#3B3A40]">
               <GoGraph  size={32} />
             </div>
-            <h3 className="text-xl mt-2 font-semibold">Explore Careers</h3>
+            <h3 className="text-[24px] mt-3 font-semibold">Explore Careers</h3>
             <p className="text-sm leading-5 mt-2 text-gray-200">
               Use a modern platform for students to explore career options,
               learn from experts, and prepare for the future.
@@ -39,7 +39,7 @@ function Successd() {
             <div className="bg-[#FFEDB6] rounded-full p-2 inline-block text-[#3B3A40]">
               <BiUserVoice className="pl-[1px]" size={35} />
             </div>
-            <h3 className="text-xl mt-2 font-semibold">Expert Talks</h3>
+            <h3 className="text-[24px] mt-3 font-semibold">Expert Talks</h3>
             <p className="text-sm leading-5 mt-2 text-gray-200">
               Learn from industry professionals and academic experts. Join live
               sessions or access our extensive recorded library.
@@ -49,7 +49,7 @@ function Successd() {
             <div className="bg-[#D1E8FF] rounded-full p-2 inline-block text-[#3B3A40]">
               <TbVectorBezier2  size={35} />
             </div>
-            <h3 className="text-xl mt-2 font-semibold">Career Guidance</h3>
+            <h3 className="text-[24px] mt-3 font-semibold">Career Guidance</h3>
             <p className="text-sm leading-5 mt-2 text-gray-200">
               Stay informed with personalized guidance from expert counselors.
               Get timely updates on opportunities and career pathways.
