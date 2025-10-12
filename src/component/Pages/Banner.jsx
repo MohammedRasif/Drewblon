@@ -48,7 +48,7 @@ function Banner() {
           />
         </div>
       </div>
-      <div className="absolute w-full top-[70vh] z-50 hidden md:block">
+      <div className="absolute w-full top-[77vh] z-50 hidden md:block">
         <Successd />
       </div>
     </div>

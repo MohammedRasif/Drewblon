@@ -9,7 +9,7 @@ function DashboardFeed() {
   const [expandedComments, setExpandedComments] = useState(new Set());
   const [expandedPosts, setExpandedPosts] = useState(new Set());
   const [commentInputs, setCommentInputs] = useState({}); // New state for comment inputs
-
+ 
   const categories = [
     "All categories",
     "Business",
@@ -44,6 +44,23 @@ function DashboardFeed() {
     },
     {
       id: 2,
+      author: "Ahmad Nur Fawaid",
+      role: "Counselor Update",
+      timeAgo: "15 minute ago",
+      title: "AP Chemistry Study Group Formation",
+      content:
+        "A comprehensive guide to managing your college application timeline and avoiding common pitfalls. Learn about early decision, regular decision, and rolling admissions.",
+      fullContent:
+        "A comprehensive guide to managing your college application timeline and avoiding common pitfalls. Learn about early decision, regular decision, and rolling admissions. This guide covers everything from choosing the right schools to writing compelling essays and preparing for interviews. We'll also discuss financial aid options and scholarship opportunities.",
+      category: "Career",
+      comments: 7,
+      likes: 12,
+      hasImage: true,
+      image:
+        "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529179/samples/woman-on-a-football-field.jpg",
+    },
+    {
+      id: 3,
       author: "Ahmad Nur Fawaid",
       role: "Counselor Update",
       timeAgo: "15 minute ago",
@@ -148,7 +165,7 @@ function DashboardFeed() {
   });
 
   return (
-    <div className=" bg-gray-50 pr-5">
+    <div className="bg-gray-50 pr-5 pb-10">
       <div className="container mx-auto">
         {/* Search Bar */}
         <div className="relative mb-6">
@@ -344,95 +361,105 @@ function DashboardFeed() {
                   </svg>
                 </button>
               </div>
-
-              {/* Comments Section */}
-              {expandedComments.has(post.id) && (
-                <div className="mt-4 pt-4 border-t border-gray-100 animate-in slide-in-from-top-2 duration-[1000ms]">
-                  {/* Existing Comments */}
-                  <div className="space-y-3 mb-4">
-                    <div className="flex items-start space-x-3">
-                      <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                        <span className="text-xs font-medium text-gray-600">
-                          JD
-                        </span>
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">
-                          John Doe
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          Great post! Very helpful information.
-                        </p>
-                        <p className="text-xs text-gray-400 mt-1">
-                          2 minutes ago
-                        </p>
-                      </div>
+              {/* Comments Section - Now always rendered but controlled via max-height */}
+              <div
+                className={`
+                  overflow-hidden 
+                  transition-all duration-500 ease-in-out
+                  ${
+                    expandedComments.has(post.id)
+                      ? "max-h-[1000px] opacity-100 mt-4 pt-4 border-t border-gray-100"
+                      : "max-h-0 opacity-0 mt-0 pt-0 border-t-0"
+                  }
+                `}
+                style={{
+                  transitionProperty: "max-height, opacity, margin-top, padding-top, border-top-width",
+                }}
+              >
+                {/* Existing Comments */}
+                <div className="space-y-3 mb-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                      <span className="text-xs font-medium text-gray-600">
+                        JD
+                      </span>
                     </div>
-                    <div className="flex items-start space-x-3">
-                      <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                        <span className="text-xs font-medium text-gray-600">
-                          SM
-                        </span>
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">
-                          Sarah Miller
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          Thanks for sharing this! Looking forward to joining
-                          the study group.
-                        </p>
-                        <p className="text-xs text-gray-400 mt-1">
-                          5 minutes ago
-                        </p>
-                      </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">
+                        John Doe
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Great post! Very helpful information.
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        2 minutes ago
+                      </p>
                     </div>
                   </div>
+                  <div className="flex items-start space-x-3">
+                    <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                      <span className="text-xs font-medium text-gray-600">
+                        SM
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">
+                        Sarah Miller
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Thanks for sharing this! Looking forward to joining
+                        the study group.
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        5 minutes ago
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
-                  {/* New Comment Input */}
-                  <div className="border-t border-gray-100 pt-4">
-                    <div className="flex items-start space-x-3">
-                      <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mt-1">
-                        <span className="text-xs font-medium text-gray-600">
-                          {post.author
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </span>
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex space-x-2">
-                          <input
-                            type="text"
-                            placeholder="Write a comment..."
-                            value={commentInputs[post.id] || ""}
-                            onChange={(e) =>
-                              handleCommentChange(post.id, e.target.value)
+                {/* New Comment Input */}
+                <div>
+                  <div className="flex items-start space-x-3">
+                    <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mt-1">
+                      <span className="text-xs font-medium text-gray-600">
+                        {post.author
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex space-x-2">
+                        <input
+                          type="text"
+                          placeholder="Write a comment..."
+                          value={commentInputs[post.id] || ""}
+                          onChange={(e) =>
+                            handleCommentChange(post.id, e.target.value)
+                          }
+                          onKeyPress={(e) => {
+                            if (e.key === "Enter") {
+                              handleSubmitComment(post.id);
                             }
-                            onKeyPress={(e) => {
-                              if (e.key === "Enter") {
-                                handleSubmitComment(post.id);
-                              }
-                            }}
-                            className="flex-1 px-3 py-2 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#3565FC] focus:border-transparent"
-                          />
-                          <button
-                            onClick={() => handleSubmitComment(post.id)}
-                            disabled={!commentInputs[post.id]?.trim()}
-                            className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                              commentInputs[post.id]?.trim()
-                                ? "bg-[#3565FC] text-white hover:bg-[#2954d4]"
-                                : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                            }`}
-                          >
-                            Post
-                          </button>
-                        </div>
+                          }}
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#3565FC] focus:border-transparent"
+                        />
+                        <button
+                          onClick={() => handleSubmitComment(post.id)}
+                          disabled={!commentInputs[post.id]?.trim()}
+                          className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                            commentInputs[post.id]?.trim()
+                              ? "bg-[#3565FC] text-white hover:bg-[#2954d4]"
+                              : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                          }`}
+                        >
+                          Post
+                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           ))}
         </div>
