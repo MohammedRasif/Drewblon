@@ -42,7 +42,7 @@ function Improve() {
       </p>
 
       {/* Marquee Section */}
-      <div className="py-6 md:py-8">
+      <div className="py-8 md:py-16">
         <Marquee speed={50} gradient={false} className="py-3 md:py-4">
           {[
             {
@@ -72,10 +72,10 @@ function Improve() {
           ].map((item, index) => (
             <div
               key={index}
-              className="text-lg md:text-2xl lg:text-3xl font-semibold text-[#64626A] flex items-center space-x-2 md:space-x-3 mx-4 md:mx-8 lg:mx-10"
+              className="text-lg md:text-2xl lg:text-5xl font-semibold text-[#64626A] flex items-center space-x-2 md:space-x-3 mx-4 md:mx-8 lg:mx-10"
             >
               {item.icon}
-              <span>{item.text}</span>
+              <span >{item.text}</span>
             </div>
           ))}
         </Marquee>
