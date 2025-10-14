@@ -115,7 +115,7 @@ function Simulation() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-        <SimulationTask/>
+      <SimulationTask />
       {/* Completed Section */}
       <div className="mb-12">
         <div className="flex items-center justify-between mb-6">
@@ -162,7 +162,7 @@ function Simulation() {
                 <img
                   src={sim.thumbnail || "/placeholder.svg"}
                   alt={sim.title}
-                  className="w-full h-48 object-cover"
+                  className="w-full h-48 px-4.5   object-cover"
                 />
               </div>
 
@@ -197,7 +197,7 @@ function Simulation() {
           <h2 className="text-2xl font-semibold text-gray-900">In Progress</h2>
           <button className="text-blue-600 hover:text-blue-700 font-medium text-sm">
             See all
-          </button>
+          </button> 
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

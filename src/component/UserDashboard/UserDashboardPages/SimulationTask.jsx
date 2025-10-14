@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { NavLink } from "react-router-dom";
 
 function SimulationTask() {
   const [showAll, setShowAll] = useState(false);
@@ -59,7 +60,7 @@ function SimulationTask() {
   const displayedCategories = showAll ? categories : categories.slice(0, 4);
 
   return (
-    <div className="w-full pb-5">
+    <div className="w-full pb-10">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-semibold text-gray-900">
@@ -76,27 +77,32 @@ function SimulationTask() {
       {/* Category Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {displayedCategories.map((category) => (
-          <div
+          <NavLink
+            to={`/dashboard/simulation/${category.id}`}
             key={category.id}
-            className="relative h-48 rounded-xl overflow-hidden cursor-pointer group"
           >
-            {/* Background Image */}
-            <img
-              src={category.image || "/placeholder.svg"}
-              alt={category.name}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-            />
+            <div
+              key={category.id}
+              className="relative h-48 rounded-xl overflow-hidden cursor-pointer group"
+            >
+              {/* Background Image */}
+              <img
+                src={category.image || "/placeholder.svg"}
+                alt={category.name}
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+              />
 
-            {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+              {/* Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
 
-            {/* Category Label */}
-            <div className="absolute bottom-0 left-0 right-0 p-4">
-              <h3 className="text-white font-semibold text-lg">
-                {category.name}
-              </h3>
+              {/* Category Label */}
+              <div className="absolute bottom-0 left-0 right-0 p-4">
+                <h3 className="text-white font-semibold text-lg">
+                  {category.name}
+                </h3>
+              </div>
             </div>
-          </div>
+          </NavLink>
         ))}
       </div>
     </div>

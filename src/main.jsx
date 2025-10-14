@@ -21,6 +21,8 @@ import DashboardVideos from "./component/UserDashboard/UserDashboardPages/Dashbo
 import DashboardVideoDetails from "./component/UserDashboard/UserDashboardPages/DashboardVideoDetails.jsx";
 import About from "./component/Pages/About.jsx";
 import Simulation from "./component/UserDashboard/UserDashboardPages/Simulation.jsx";
+import SimulationTaskDetails from "./component/UserDashboard/UserDashboardPages/SimulationTaskDetails.jsx";
+import SimulationQuestion from "./component/UserDashboard/UserDashboardPages/SimulationQuestion.jsx";
 
 const router = createBrowserRouter([
   {
@@ -97,6 +99,14 @@ const router = createBrowserRouter([
       {
         path: "/dashboard/simulation",
         element: <Simulation />,
+      },
+      {
+        path: "/dashboard/simulation/:id",
+        element: <SimulationTaskDetails />,
+      },
+      {
+        path: "/dashboard/simulationQuestion/:id",
+        element: <SimulationQuestion />,
       },
     ],
   },

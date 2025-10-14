@@ -80,11 +80,18 @@ const UserDashboardSidebar = () => {
 
   const getActiveItemFromPath = () => {
     const currentPath = location.pathname;
-    // Check if the current path starts with /dashboard/details to highlight "videos"
+
+    // If current path starts with /dashboard/details → videos active
     if (currentPath.startsWith("/dashboard/details")) {
       return "videos";
     }
-    // Otherwise, find the menu item that matches the current path
+
+    // If path starts with /dashboard/simulation → simulation active (handles /dashboard/simulation/4 etc.)
+    if (currentPath.startsWith("/dashboard/simulation")) {
+      return "simulation";
+    }
+
+    // Otherwise match exact path
     const foundItem = menuItems.find((item) => item.path === currentPath);
     return foundItem ? foundItem.id : "profile";
   };
