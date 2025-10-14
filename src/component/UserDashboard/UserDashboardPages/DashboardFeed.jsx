@@ -130,15 +130,11 @@ function DashboardFeed() {
     if (commentInputs[postId]?.trim()) {
       // Here you would typically send the comment to your backend
       console.log(`Comment for post ${postId}:`, commentInputs[postId]);
-
-      // Clear the input after submission
       setCommentInputs((prev) => ({
         ...prev,
         [postId]: "",
       }));
 
-      // You can update the comments count here
-      // post.comments += 1
     }
   };
 
