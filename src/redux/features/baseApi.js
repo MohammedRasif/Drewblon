@@ -39,6 +39,15 @@ export const baseApi = createApi({
       query:() => "/feed/categories/",
       providesTags:["feed"]
     }),
+    // talk section recorded categroy
+    showTalkRecordedCategary: builder.query({
+      query:() => "/talks/categories/",
+      providesTags:["recorded"]
+    }),
+    // talk section show data
+    showTalkRecordedData: builder.query({
+      query:() => "/talks/archived/",
+    })
 
   }),
 });
@@ -47,5 +56,8 @@ export const {
   useShowProfileInformationQuery,
   useShowFeedDataQuery,
   useShowListFeedDataQuery,
+  useShowTalkRecordedCategaryQuery,
+  useShowTalkRecordedDataQuery,
+
   
 } = baseApi;
