@@ -2,14 +2,34 @@
 
 import { useState } from "react";
 import Image from "../../image/cuate.png";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useLogInMutation } from "../../redux/features/authentication";
+import { toast, ToastContainer } from "react-toastify";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-
+  const navigate = useNavigate();
+  const [login, { isLoading }] = useLogInMutation();
+  const handleLogin = async () => {
+    if (!email || !password) {
+      toast.error("Please enter both email and password");
+      return;
+    }
+    try {
+      const result = await login({ email, password }).unwrap();
+      toast.success(result?.message || "Login successful!");
+      if (result.access) {
+        localStorage.setItem("access_token", result.access);
+        localStorage.setItem("refresh_token", result.refresh);
+      }
+      navigate("/dashboard");
+    } catch (error) {
+      toast.error(error?.data?.error || "Login failed");
+    }
+  };
   return (
     <div className="flex justify-center items-center h-screen bg-white">
       <div className="w-1/2">
@@ -113,25 +133,32 @@ function Login() {
               />
               <span className="ml-2 text-sm text-gray-600">Remember me</span>
             </label>
-            <a href="#" className="text-sm text-blue-600 hover:text-blue-800">
+            <NavLink
+              to="/fotget_password"
+              className="text-sm text-blue-600 hover:text-blue-800"
+            >
               Forgot Password ?
-            </a>
+            </NavLink>
           </div>
 
           {/* Sign In Button */}
-          <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors mb-4 cursor-pointer">
-            Sign in
+          <button
+            onClick={handleLogin}
+            disabled={isLoading}
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors mb-4 cursor-pointer"
+          >
+            {isLoading ? "Singing in.." : "Sing in"}
           </button>
 
           {/* OR Divider */}
-          <div className="flex items-center mb-4">
+          {/* <div className="flex items-center mb-4">
             <div className="flex-1 border-t border-gray-300"></div>
             <span className="px-4 text-sm text-gray-500">or</span>
             <div className="flex-1 border-t border-gray-300"></div>
-          </div>
+          </div> */}
 
           {/* Continue with Google */}
-          <button className="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center justify-center mb-6">
+          {/* <button className="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center justify-center mb-6">
             <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
               <path
                 fill="#4285F4"
@@ -151,20 +178,12 @@ function Login() {
               />
             </svg>
             Continue with Google
-          </button>
+          </button> */}
 
-          {/* Sign Up Link */}
-          <p className="text-center text-sm text-gray-600">
-            Don't have an account?{" "}
-            <NavLink
-              to="/register"
-              className="text-blue-600 hover:text-blue-800 font-medium"
-            >
-              Sign up
-            </NavLink>
-          </p>
+        
         </div>
-      </div>        
+      </div>
+      <ToastContainer />
     </div>
   );
 }

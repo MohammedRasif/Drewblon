@@ -1,5 +1,6 @@
 import { FaStar, FaClock } from "react-icons/fa";
 import SimulationTask from "./SimulationTask";
+import { NavLink } from "react-router-dom";
 
 function Simulation() {
   const completedSimulations = [
@@ -120,9 +121,11 @@ function Simulation() {
       <div className="mb-12">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold text-gray-900">Completed</h2>
-          <button className="text-blue-600 hover:text-blue-700 font-medium text-sm">
-            See all
-          </button>
+          <NavLink to="/dashboard/seeAllSimulation">
+            <button className="text-blue-600 hover:text-blue-700 font-medium text-sm">
+              See all
+            </button>
+          </NavLink>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -195,9 +198,11 @@ function Simulation() {
       <div>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold text-gray-900">In Progress</h2>
-          <button className="text-blue-600 hover:text-blue-700 font-medium text-sm">
-            See all
-          </button> 
+          <NavLink to="/dashboard/seeAllSimulation">
+            <button className="text-blue-600 hover:text-blue-700 font-medium text-sm">
+              See all
+            </button>
+          </NavLink>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

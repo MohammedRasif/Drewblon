@@ -23,6 +23,9 @@ import About from "./component/Pages/About.jsx";
 import Simulation from "./component/UserDashboard/UserDashboardPages/Simulation.jsx";
 import SimulationTaskDetails from "./component/UserDashboard/UserDashboardPages/SimulationTaskDetails.jsx";
 import SimulationQuestion from "./component/UserDashboard/UserDashboardPages/SimulationQuestion.jsx";
+import AllSeeSimulation from "./component/UserDashboard/UserDashboardPages/AllSeeSimulation.jsx";
+import { Provider } from "react-redux";
+import { store } from "./redux/store.js";
 
 const router = createBrowserRouter([
   {
@@ -108,14 +111,20 @@ const router = createBrowserRouter([
         path: "/dashboard/simulationQuestion/:id",
         element: <SimulationQuestion />,
       },
+      {
+        path: "/dashboard/seeAllSimulation",
+        element: <AllSeeSimulation />,
+      },
     ],
   },
 ]);
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <React.StrictMode>
+    <Provider store={store}>
+      <React.StrictMode>
       <RouterProvider router={router} />
     </React.StrictMode>
+    </Provider>
   </StrictMode>
 );

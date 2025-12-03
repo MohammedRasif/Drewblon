@@ -2,19 +2,67 @@
 
 import { useState } from "react";
 import img from "../../image/rafikiasdf.png";
+import { useUpdatePasswordMutation } from "../../redux/features/authentication";
+import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 
 function SetNewPassword() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  // Password validation checks
+  const [updatePassword, { isLoading }] = useUpdatePasswordMutation();
+  const navigate = useNavigate();
   const hasValidLength = newPassword.length >= 8 && newPassword.length <= 32;
   const hasUppercase = /[A-Z]/.test(newPassword);
   const hasNumber = /\d/.test(newPassword);
   const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword);
+  const access_token = localStorage.getItem("access_token")
+  const handleResetPassword = async () => {
+    if (!newPassword || !confirmPassword) {
+      toast.error("Please fill both password fields");
+      return;
+    }
 
+    if (newPassword !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    if (newPassword.length < 8 || newPassword.length > 32) {
+      toast.error("Password must be 8-32 characters");
+      return;
+    }
+    if (!/[A-Z]/.test(newPassword)) {
+      toast.error("Password must contain an uppercase letter");
+      return;
+    }
+    if (!/\d/.test(newPassword)) {
+      toast.error("Password must contain a number");
+      return;
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(newPassword)) {
+      toast.error("Password must contain a special character");
+      return;
+    }
+
+    try {
+      const result = await updatePassword({
+        new_password: newPassword,
+        confirm_password: confirmPassword,
+        access_token: access_token
+      }).unwrap();
+      toast.success(result?.message || "Password changed successfully!");
+      localStorage.removeItem("reset_email");
+      navigate("/login");
+    } catch (err) {
+      toast.error(
+        err?.data?.detail ||
+          err?.data?.password?.[0] ||
+          "Failed to reset password"
+      );
+    }
+  };
   return (
     <div className="flex justify-center items-center h-screen bg-white">
       <div className="w-1/2">
@@ -30,32 +78,6 @@ function SetNewPassword() {
       {/* input and some details */}
       <div className="w-1/2 px-12">
         <div className="max-w-md">
-          {/* Header with navigation */}
-          <div className="flex items-center justify-between mb-8">
-            <button className="flex items-center text-gray-600 hover:text-gray-800">
-              <svg
-                className="w-5 h-5 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              Back
-            </button>
-            <div className="text-right">
-              <div className="text-sm text-gray-500">Step 3 of 3</div>
-              <div className="text-sm text-gray-600 font-medium">
-                Forgot Password
-              </div>
-            </div>
-          </div>
-
           {/* Main heading */}
           <div className="mb-6">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -305,11 +327,43 @@ function SetNewPassword() {
           </div>
 
           {/* Reset Password Button */}
-          <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors">
-            Reset Password
+          <button
+            onClick={handleResetPassword}
+            disabled={isLoading}
+            className={`w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center ${
+              isLoading ? "opacity-70 cursor-not-allowed" : "hover:bg-blue-700"
+            }`}
+          >
+            {isLoading ? (
+              <>
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v-4a12 12 0 00-12 12z"
+                  ></path>
+                </svg>
+                Updating...
+              </>
+            ) : (
+              "Reset Password"
+            )}
           </button>
         </div>
       </div>
+      <ToastContainer/>
     </div>
   );
 }

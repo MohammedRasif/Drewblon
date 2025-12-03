@@ -33,10 +33,9 @@ const underlineVariants = {
   },
 };
 
-// Animation for side menu
 const menuVariants = {
   hidden: {
-    x: "100%", // Start off-screen to the right
+    x: "100%", 
     opacity: 0,
     transition: { duration: 0.3, ease: "easeInOut" },
   },
@@ -123,16 +122,18 @@ function Navbar() {
           whileHover="hover"
           className="text-black py-2 px-3 rounded-md lg:text-[18px]"
         >
-          Sign in
+       
         </motion.button>
-        <motion.button
+       <NavLink to="/login">
+         <motion.button
           variants={buttonVariants}
           initial="initial"
           whileHover="hover"
           className="bg-[#407BFF] text-white py-2 px-3 rounded-md lg:text-[18px]"
         >
-          Sign up
+          Sign in
         </motion.button>
+       </NavLink>
       </div>
 
       {/* Hamburger Icon for Mobile */}
@@ -222,17 +223,19 @@ function Navbar() {
               onClick={toggleMenu}
               className="text-black py-2 px-3 rounded-md w-full text-left"
             >
-              Sign in
+          
             </motion.button>
-            <motion.button
+           <NavLink to="/login">
+             <motion.button
               variants={buttonVariants}
               initial="initial"
               whileHover="hover"
               onClick={toggleMenu}
               className="bg-[#407BFF] text-white py-2 px-3 rounded-md w-full text-left"
             >
-              Sign up
+              Sign in
             </motion.button>
+           </NavLink>
           </motion.div>
         )}
       </AnimatePresence>

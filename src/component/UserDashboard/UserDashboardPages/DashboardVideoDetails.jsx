@@ -165,7 +165,7 @@ function DashboardVideoDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pr-5 pb-5">
+    <div className="min-h-screen  pr-5 pb-5">
       <div className="container mx-auto">
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">

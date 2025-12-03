@@ -78,23 +78,26 @@ const UserDashboardSidebar = () => {
     },
   ];
 
-  const getActiveItemFromPath = () => {
-    const currentPath = location.pathname;
+const getActiveItemFromPath = () => {
+  const currentPath = location.pathname;
 
-    // If current path starts with /dashboard/details → videos active
-    if (currentPath.startsWith("/dashboard/details")) {
-      return "videos";
-    }
+  // If current path starts with /dashboard/details → videos active
+  if (currentPath.startsWith("/dashboard/details")) {
+    return "videos";
+  }
 
-    // If path starts with /dashboard/simulation → simulation active (handles /dashboard/simulation/4 etc.)
-    if (currentPath.startsWith("/dashboard/simulation")) {
-      return "simulation";
-    }
+  if (currentPath.startsWith("/dashboard/seeAllSimulation")) {
+    return "simulation";
+  }
 
-    // Otherwise match exact path
-    const foundItem = menuItems.find((item) => item.path === currentPath);
-    return foundItem ? foundItem.id : "profile";
-  };
+  if (currentPath.startsWith("/dashboard/simulation")) {
+    return "simulation";
+  }
+
+  // Otherwise match exact path
+  const foundItem = menuItems.find((item) => item.path === currentPath);
+  return foundItem ? foundItem.id : "profile";
+};
 
   useEffect(() => {
     const newActiveItem = getActiveItemFromPath();
