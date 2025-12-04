@@ -1,59 +1,92 @@
 import { IoChevronBack, IoCheckmark } from "react-icons/io5";
 import { FaStar } from "react-icons/fa";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import SimulationMCQ from "./SimulationMCQ";
+import { useShowSimulationCategoryQuestionQuery } from "../../../redux/features/baseApi";
 
 function SimulationQuestion() {
-  // Generate questions 1-10
-  const questions = Array.from({ length: 10 }, (_, i) => ({
-    id: i + 1,
-    isCompleted: i === 0, // First question is completed
-    title: "Teacher Sim",
-  }));
+  const { id } = useParams(); // category_id
+  const taskId = localStorage.getItem("SimulationCategory");
+  
+  const { data: questionData, isLoading } = useShowSimulationCategoryQuestionQuery({
+    taskId,
+    categoryId: id
+  });
 
-  // State to manage popup visibility and selected question ID
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState(null);
+  const [selectedLevel, setSelectedLevel] = useState(null);
 
-  // Handle card click to open popup
-  const handleCardClick = (id) => {
-    setSelectedId(id);
+  // Convert teacher_sim_levels object to array
+  const levels = questionData?.teacher_sim_levels 
+    ? Object.entries(questionData.teacher_sim_levels).map(([level, data]) => ({
+        id: parseInt(level),
+        ...data
+      }))
+    : [];
+
+  const handleCardClick = (level) => {
+    setSelectedLevel(level);
     setIsPopupOpen(true);
   };
 
-  // Close popup
   const closePopup = () => {
     setIsPopupOpen(false);
-    setSelectedId(null);
+    setSelectedLevel(null);
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen p-6">
+        <div className="mb-6">
+          <div className="h-8 w-48 bg-gray-200 animate-pulse rounded" />
+        </div>
+        <div className="w-[340px] h-[220px] bg-gray-200 animate-pulse rounded-xl mb-14" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+            <div key={i} className="bg-gray-200 rounded-lg h-32 animate-pulse" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen p-6">
       {/* Header */}
       <div className="mb-6">
         <button className="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors">
-          <span className="text-[24px]  font-medium">Accounting</span>
+          <span className="text-[24px] font-medium">
+            {questionData?.category_name}
+          </span>
         </button>
       </div>
 
       {/* Category Card */}
-      <div className="mb-14  w-fit">
+      <div className="mb-14 w-fit">
         <div className="relative w-[340px] h-[220px] rounded-xl overflow-hidden group cursor-pointer">
           <img
-            src="https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759812746/day-picture-id1163588010_xjbdnc.jpg"
-            alt="Accounting"
+            src="https://res.cloudinary.com/dfsu0cuvb/image/upload/v1751196563/b170870007dfa419295d949814474ab2_t_qm2pcq.jpg"
+            alt={questionData?.category_name}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
           <div className="absolute bottom-5 left-3 right-3">
-            <h3 className="text-white font-semibold text-[24px] ">
-              Accounting
+            <h3 className="text-white font-semibold text-[24px]">
+              {questionData?.category_name}
             </h3>
-            <p className="text-white/90 text-[14px] mb-1">Level 1 to 10</p>
+            <p className="text-white/90 text-[14px] mb-1">
+              Level 1 to {levels.length}
+            </p>
             <div className="absolute -bottom-2 left-0 right-0 h-[8px] bg-white rounded-full">
               <div
                 className="h-full bg-blue-500 rounded-xl"
-                style={{ width: "60%" }}
+                style={{
+                  width: `${
+                    (levels.filter((l) => l.completed).length / levels.length) *
+                    100
+                  }%`,
+                }}
               />
             </div>
           </div>
@@ -62,13 +95,13 @@ function SimulationQuestion() {
 
       {/* Questions Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        {questions.map((question) => (
+        {levels.map((level) => (
           <div
-            key={question.id}
+            key={level.id}
             className="bg-[#F5F5F5] rounded-lg p-6 hover:shadow-md transition-shadow cursor-pointer"
-            onClick={() => handleCardClick(question.id)}
+            onClick={() => handleCardClick(level.id)}
           >
-            {question.isCompleted ? (
+            {level.completed ? (
               <div className="flex flex-col items-center justify-center">
                 <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mb-2">
                   <IoCheckmark className="w-6 h-6 text-white" />
@@ -77,7 +110,7 @@ function SimulationQuestion() {
                   Completed
                 </p>
                 <div className="flex gap-0.5">
-                  {[...Array(3)].map((_, i) => (
+                  {[...Array(level.stars)].map((_, i) => (
                     <FaStar
                       key={i}
                       className="w-5 h-5 text-yellow-400 fill-current"
@@ -87,10 +120,15 @@ function SimulationQuestion() {
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center">
-                <p className="text-[24px] mb-1">{question.title}</p>
+                <p className="text-[24px] mb-1">Teacher Sim</p>
                 <p className="text-2xl font-semibold text-gray-800">
-                  {question.id}
+                  {level.id}
                 </p>
+                {level.questions_answered > 0 && (
+                  <p className="text-xs text-gray-600 mt-2">
+                    {level.questions_answered} answered
+                  </p>
+                )}
               </div>
             )}
           </div>
@@ -103,7 +141,9 @@ function SimulationQuestion() {
           <SimulationMCQ
             isOpen={isPopupOpen}
             onClose={closePopup}
-            selectedId={selectedId}
+            selectedLevel={selectedLevel}
+            categoryId={id}
+            taskId={taskId}
           />
         </div>
       )}

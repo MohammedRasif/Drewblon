@@ -2,62 +2,32 @@
 
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useShowSimulationQuery } from "../../../redux/features/baseApi";
 
 function SimulationTask() {
   const [showAll, setShowAll] = useState(false);
+  const { data: simulation, isLoading } = useShowSimulationQuery();
 
-  const categories = [
-    {
-      id: 1,
-      name: "Business",
-      image:
-        "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1760418336/b075a41637a05c9217374a2e411f8a04d536e2da_x1m4np.jpg",
-    },
-    {
-      id: 2,
-      name: "Engineering",
-      image:
-        "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759822517/images_1_n963r1.jpg",
-    },
-    {
-      id: 3,
-      name: "HealthCare",
-      image:
-        "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1760418336/d6108a299a1be19d19a2150aa953dc9a85a786e2_e8amqb.jpg",
-    },
-    {
-      id: 4,
-      name: "Trade",
-      image:
-        "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1760418336/6829c41bbaf9b7c592c7c376b701b859afc0bdd4_x6g8we.jpg",
-    },
-    {
-      id: 5,
-      name: "Art Entertainment and culture",
-      image:
-        "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759822517/better-learner-cover_zfyxqo.jpg",
-    },
-    {
-      id: 6,
-      name: "Science/Research",
-      image:
-        "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759822517/1_2LywpPsQnnuRwQpDVrydAQ_cfd3ev.jpg",
-    },
-    {
-      id: 7,
-      name: "Informational Tech",
-      image:
-        "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759822516/images_2_gsamts.jpg",
-    },
-    {
-      id: 8,
-      name: "Law/Legal",
-      image:
-        "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759812746/day-picture-id1163588010_xjbdnc.jpg",
-    },
-  ];
+  const displayedCategories = showAll 
+    ? simulation 
+    : simulation?.slice(0, 4);
 
-  const displayedCategories = showAll ? categories : categories.slice(0, 4);
+  if (isLoading) {
+    return (
+      <div className="w-full pb-10">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-semibold text-gray-900">
+            Simulation Task
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-48 rounded-xl bg-gray-200 animate-pulse" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full pb-10">
@@ -66,29 +36,31 @@ function SimulationTask() {
         <h2 className="text-2xl font-semibold text-gray-900">
           Simulation Task
         </h2>
-        <button
-          onClick={() => setShowAll(!showAll)}
-          className="text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors"
-        >
-          {showAll ? "See less" : "See all"}
-        </button>
+        {simulation && simulation.length > 4 && (
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors"
+          >
+            {showAll ? "See less" : "See all"}
+          </button>
+        )}
       </div>
 
       {/* Category Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {displayedCategories.map((category) => (
+        {displayedCategories?.map((category) => (
           <NavLink
             to={`/dashboard/simulation/${category.id}`}
             key={category.id}
           >
-            <div
-              key={category.id}
-              className="relative h-48 rounded-xl overflow-hidden cursor-pointer group"
-            >
+            <div className="relative h-48 rounded-xl overflow-hidden cursor-pointer group">
               {/* Background Image */}
               <img
-                src={category.image || "/placeholder.svg"}
-                alt={category.name}
+                src={
+                  category.cover_image ||
+                  "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1751196563/b170870007dfa419295d949814474ab2_t_qm2pcq.jpg"
+                }
+                alt={category.title}
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
               />
 
@@ -98,9 +70,19 @@ function SimulationTask() {
               {/* Category Label */}
               <div className="absolute bottom-0 left-0 right-0 p-4">
                 <h3 className="text-white font-semibold text-lg">
-                  {category.name}
+                  {category.title}
                 </h3>
+                <p className="text-white/80 text-sm mt-1">
+                  {category.category_count} categories
+                </p>
               </div>
+
+              {/* Progress indicator if completed > 0 */}
+              {category.completed > 0 && (
+                <div className="absolute top-3 right-3 bg-white/90 px-2 py-1 rounded-full text-xs font-medium">
+                  {Math.round(category.completed)}%
+                </div>
+              )}
             </div>
           </NavLink>
         ))}

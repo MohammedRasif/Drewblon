@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, NavLink } from "react-router-dom";
 import img from "../../../image/Frame 11.png";
 
 const UserDashboardSidebar = () => {
@@ -51,7 +51,7 @@ const UserDashboardSidebar = () => {
     {
       id: "videos",
       label: "Videos",
-      path: "/dashboard/video",
+      path: "/dashboard/video/category",
       icon: (
         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
           <path
@@ -81,8 +81,10 @@ const UserDashboardSidebar = () => {
 const getActiveItemFromPath = () => {
   const currentPath = location.pathname;
 
-  // If current path starts with /dashboard/details → videos active
   if (currentPath.startsWith("/dashboard/details")) {
+    return "videos";
+  }
+  if (currentPath.startsWith("/dashboard/video")) {
     return "videos";
   }
 
@@ -115,7 +117,9 @@ const getActiveItemFromPath = () => {
     <div className="w-64 h-screen shadow-lg">
       {/* Logo Section */}
       <div className="flex justify-center items-center pt-5 pb-10">
-        <img src={img} alt="Logo" className="h-8" />
+       <NavLink to="/">
+         <img src={img} alt="Logo" className="h-28" />
+       </NavLink>
       </div>
 
       {/* Navigation Menu */}

@@ -1,181 +1,113 @@
 "use client";
 
-import { useState } from "react";
-import { Link } from "react-router-dom"; // Use react-router-dom's Link
+import { useState, useMemo } from "react";
+import { Link, useParams } from "react-router-dom";
+import {
+  useShowVideoTopicDataQuery,
+  useShowVideoTopicQuery,
+} from "../../../redux/features/baseApi";
 
 function DashboardVideos() {
+  const { id } = useParams(); 
   const [activeCategory, setActiveCategory] = useState("All categories");
+  const [selectedTopicId, setSelectedTopicId] = useState();
+  const [selectedCategoryId, setSelectedCategoryId] = useState();
 
-  const categories = [
-    "All categories",
-    "Business",
-    "Engineering",
-    "Art Entertainment and culture",
-    "HealthCare",
-    "Trades",
-    "Science/Research",
-    "Informational Tech",
-    "Law/Legal",
-    "Public Sector",
-    "Exploration",
-    "Life and Career Advice",
-  ];
+  const {
+    data: videoCategory,
+    isLoading: categoryLoading,
+    error: categoryError,
+  } = useShowVideoTopicQuery(id);
 
-  const newVideos = [
-    {
-      id: 1,
-      title: "Web & UI Design Using Figma",
-      subtitle: "Beside Canggu at Web company",
-      thumbnail:
-        "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759822517/lifelong-learning-success_vlpiej.webp",
-      participants: [
-        {
-          id: 1,
-          avatar:
-            "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529179/cld-sample.jpg",
-        },
-        {
-          id: 2,
-          avatar:
-            "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529179/samples/upscale-face-1.jpg",
-        },
-        {
-          id: 3,
-          avatar:
-            "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529179/samples/woman-on-a-football-field.jpg",
-        },
-      ],
-      totalParticipants: 7,
-    },
-    {
-      id: 2,
-      title: "Web & UI Design Using Figma",
-      subtitle: "Beside Canggu at Web company",
-      thumbnail:
-        "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759822517/life-long-learner_vekkdy.jpg",
-      participants: [
-        {
-          id: 1,
-          avatar:
-            "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529177/samples/smile.jpg",
-        },
-        {
-          id: 2,
-          avatar:
-            "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529173/samples/two-ladies.jpg",
-        },
-        {
-          id: 3,
-          avatar:
-            "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529170/samples/people/bicycle.jpg",
-        },
-      ],
-      totalParticipants: 7,
-    },
-    {
-      id: 3,
-      title: "Web & UI Design Using Figma",
-      subtitle: "Beside Canggu at Web company",
-      thumbnail:
-        "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759822517/blog_V0otReuP_lnjvpf.jpg",
-      participants: [
-        {
-          id: 1,
-          avatar:
-            "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529169/samples/landscapes/architecture-signs.jpg",
-        },
-        {
-          id: 2,
-          avatar:
-            "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529169/samples/bike.jpg",
-        },
-        {
-          id: 3,
-          avatar:
-            "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529169/samples/people/boy-snow-hoodie.jpg",
-        },
-      ],
-      totalParticipants: 7,
-    },
-  ];
+  const {
+    data: videoTopic,
+    isLoading: topicLoading,
+    error: topicError,
+  } = useShowVideoTopicDataQuery(id);
 
-  const popularVideos = [
-    {
-      id: 4,
-      title: "Web & UI Design Using Figma",
-      subtitle: "Beside Canggu at Web company",
-      thumbnail:
-        "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759822517/1_yjcdof.jpg",
-      participants: [
-        {
-          id: 1,
-          avatar:
-            "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529169/samples/people/jazz.jpg",
-        },
-        {
-          id: 2,
-          avatar:
-            "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529169/samples/bike.jpg",
-        },
-        {
-          id: 3,
-          avatar:
-            "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529169/samples/people/smiling-man.jpg",
-        },
-      ],
-      totalParticipants: 7,
-    },
-    {
-      id: 5,
-      title: "Web & UI Design Using Figma",
-      subtitle: "Beside Canggu at Web company",
-      thumbnail:
-        "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759822517/better-learner-cover_zfyxqo.jpg",
-      participants: [
-        {
-          id: 1,
-          avatar:
-            "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529169/samples/people/smiling-man.jpg",
-        },
-        {
-          id: 2,
-          avatar:
-            "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529168/samples/people/kitchen-bar.jpg",
-        },
-        {
-          id: 3,
-          avatar:
-            "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529168/samples/people/kitchen-bar.jpg",
-        },
-      ],
-      totalParticipants: 7,
-    },
-    {
-      id: 6,
-      title: "Web & UI Design Using Figma",
-      subtitle: "Beside Canggu at Web company",
-      thumbnail:
-        "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759822517/cover_yrth1n.jpg",
-      participants: [
-        {
-          id: 1,
-          avatar:
-            "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529167/samples/ecommerce/analog-classic.jpg",
-        },
-        {
-          id: 2,
-          avatar:
-            "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529168/samples/animals/reindeer.jpg",
-        },
-        {
-          id: 3,
-          avatar:
-            "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529169/samples/people/boy-snow-hoodie.jpg",
-        },
-      ],
-      totalParticipants: 7,
-    },
-  ];
+  const categories = useMemo(() => {
+    const cats = ["All categories"];
+    if (videoCategory?.results) {
+      videoCategory.results.forEach((topic) => {
+        if (topic.name && !cats.includes(topic.name)) {
+          cats.push(topic.name);
+        }
+      });
+    }
+    return cats;
+  }, [videoCategory]);
+
+  // Handle category click
+  const handleCategoryClick = (category) => {
+    setActiveCategory(category);
+
+    if (category === "All categories") {
+      setSelectedTopicId(null);
+      setSelectedCategoryId(null);
+    } else {
+      const topic = videoCategory?.results?.find(
+        (t) => t.name === category
+      );
+      if (topic) {
+        setSelectedTopicId(topic.id);
+        setSelectedCategoryId(topic.category); 
+      }
+    }
+  };
+
+  // Get playlists to display
+  const getPlaylists = () => {
+    if (activeCategory === "All categories") {
+      // Show all playlists from all topics
+      if (!videoCategory?.results) return [];
+      
+      const allPlaylists = [];
+      videoCategory.results.forEach((topic) => {
+        // You might need to fetch each topic's playlists separately
+        // For now, returning empty array for "All categories"
+      });
+      return allPlaylists;
+    } else {
+      // Show playlists from selected topic
+      if (!videoTopic?.topics?.[0]?.playlists) return [];
+      return videoTopic.topics[0].playlists;
+    }
+  };
+
+  const playlists = getPlaylists();
+
+  // Split playlists into new and popular (example logic)
+  const newPlaylists = useMemo(() => {
+    return playlists.slice(0, 3);
+  }, [playlists]);
+
+  const popularPlaylists = useMemo(() => {
+    return playlists.slice(3, 6);
+  }, [playlists]);
+
+  // Loading state
+  if (categoryLoading) {
+    return (
+      <div className="bg-gray-50 pr-5 pb-10 min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading videos...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (categoryError) {
+    return (
+      <div className="bg-gray-50 pr-5 pb-10 min-h-screen flex items-center justify-center">
+        <div className="text-center text-red-600">
+          <p className="text-xl font-semibold mb-2">Error loading videos</p>
+          <p className="text-sm">Please try again later</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-50 pr-5 pb-10">
@@ -211,7 +143,7 @@ function DashboardVideos() {
           {categories.map((category) => (
             <button
               key={category}
-              onClick={() => setActiveCategory(category)}
+              onClick={() => handleCategoryClick(category)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
                 activeCategory === category
                   ? "bg-blue-600 text-white"
@@ -224,101 +156,122 @@ function DashboardVideos() {
         </div>
       </div>
 
+      {/* Loading state for topic data */}
+      {topicLoading && selectedTopicId && (
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mx-auto mb-3"></div>
+          <p className="text-gray-600">Loading playlists...</p>
+        </div>
+      )}
+
+      {/* Error state for topic data */}
+      {topicError && selectedTopicId && (
+        <div className="text-center py-12 text-red-600">
+          <p>Error loading playlists</p>
+        </div>
+      )}
+
       {/* New Section */}
-      <div className="mb-12">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">New</h2>
-          <button className="text-blue-600 hover:text-blue-700 font-medium text-sm">
-            See all
-          </button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {newVideos.map((video) => (
-            <Link
-              to={`/dashboard/details/${video.id}`} // Use 'to' instead of 'href' for react-router-dom
-              key={video.id}
-              className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-            >
-              <div className="relative aspect-video">
-                <img
-                  src={video.thumbnail || "/placeholder.svg"}
-                  alt={video.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-800 mb-1">
-                  {video.title}
-                </h3>
-                <p className="text-sm text-gray-500 mb-4">{video.subtitle}</p>
-                <div className="flex items-center">
-                  <div className="flex -space-x-2">
-                    {video.participants.map((participant) => (
-                      <img
-                        key={participant.id}
-                        src={participant.avatar || "/placeholder.svg"}
-                        alt="Participant"
-                        className="w-8 h-8 rounded-full border-2 border-white"
-                      />
-                    ))}
-                  </div>
-                  <span className="ml-3 text-sm text-gray-600">
-                    + {video.totalParticipants} Participants
-                  </span>
+      {!topicLoading && newPlaylists.length > 0 && (
+        <div className="mb-12">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-800">New</h2>
+            <button className="text-blue-600 hover:text-blue-700 font-medium text-sm">
+              See all
+            </button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {newPlaylists.map((playlist) => (
+              <Link
+                to={`/dashboard/details/${playlist.id}`}
+                key={playlist.id}
+                className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+              >
+                <div className="relative aspect-video">
+                  <img
+                    src={playlist.thumbnail || "/placeholder.svg"}
+                    alt={playlist.title}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-              </div>
-            </Link>
-          ))}
+                <div className="p-4">
+                  <h3 className="font-semibold text-gray-800 mb-1">
+                    {playlist.title}
+                  </h3>
+                  <p className="text-sm text-gray-500 mb-4">
+                    {playlist.description || "No description"}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">
+                      {playlist.video_count} Videos
+                    </span>
+                    <span className="text-xs text-gray-400">
+                      {new Date(playlist.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Popular Section */}
-      <div>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Popular</h2>
-          <button className="text-blue-600 hover:text-blue-700 font-medium text-sm">
-            See all
-          </button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {popularVideos.map((video) => (
-            <Link
-              to={`/dashboard/details/${video.id}`} // Use 'to' instead of 'href' for react-router-dom
-              key={video.id}
-              className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-            >
-              <div className="relative aspect-video">
-                <img
-                  src={video.thumbnail || "/placeholder.svg"}
-                  alt={video.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-800 mb-1">
-                  {video.title}
-                </h3>
-                <p className="text-sm text-gray-500 mb-4">{video.subtitle}</p>
-                <div className="flex items-center">
-                  <div className="flex -space-x-2">
-                    {video.participants.map((participant) => (
-                      <img
-                        key={participant.id}
-                        src={participant.avatar || "/placeholder.svg"}
-                        alt="Participant"
-                        className="w-8 h-8 rounded-full border-2 border-white"
-                      />
-                    ))}
-                  </div>
-                  <span className="ml-3 text-sm text-gray-600">
-                    + {video.totalParticipants} Participants
-                  </span>
+      {!topicLoading && popularPlaylists.length > 0 && (
+        <div>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-800">Popular</h2>
+            <button className="text-blue-600 hover:text-blue-700 font-medium text-sm">
+              See all
+            </button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {popularPlaylists.map((playlist) => (
+              <Link
+                to={`/dashboard/details/${playlist.id}`}
+                key={playlist.id}
+                className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+              >
+                <div className="relative aspect-video">
+                  <img
+                    src={playlist.thumbnail || "/placeholder.svg"}
+                    alt={playlist.title}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-              </div>
-            </Link>
-          ))}
+                <div className="p-4">
+                  <h3 className="font-semibold text-gray-800 mb-1">
+                    {playlist.title}
+                  </h3>
+                  <p className="text-sm text-gray-500 mb-4">
+                    {playlist.description || "No description"}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">
+                      {playlist.video_count} Videos
+                    </span>
+                    <span className="text-xs text-gray-400">
+                      {new Date(playlist.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Empty state */}
+      {!topicLoading &&
+        !categoryLoading &&
+        playlists.length === 0 &&
+        activeCategory !== "All categories" && (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">
+              No playlists available in this category
+            </p>
+          </div>
+        )}
     </div>
   );
 }

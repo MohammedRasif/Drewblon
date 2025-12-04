@@ -16,48 +16,189 @@ export const baseApi = createApi({
     },
   }),
 
-  tagTypes: [
-    "profileInfo",
-    "earnings",
-    "rentals",
-    "manageRentalsDetails",
-    "profileInfo",
-  ],
+  tagTypes: ["profileInfo", "register", "simulation"],
   endpoints: (builder) => ({
+    // showProfileInformation: builder.query({
+    //   query: () => "/accounts/profile/",
+    //   providesTags: ["profileInfo"],
+    // }),
+
+    // show dashboard data
+
+    showProfileOverView: builder.query({
+      query: () => "/accounts/profile-stats/",
+    }),
+    // showProfileInformation
     showProfileInformation: builder.query({
       query: () => "/accounts/profile/",
-      providesTags: ["profileInfo"],
     }),
 
-    // show feed data 
-    showFeedData: builder.query({
-      query:() => "/feed/",
-      providesTags:["feed"]
+    // showPorfile leaderborad
+
+    showProfileLeaderBorad: builder.query({
+      query: () => "/rankings/",
     }),
-    // show feed list data 
+
+    // show feed data
+    showFeedData: builder.query({
+      query: () => "/feed/",
+      providesTags: ["feed"],
+    }),
+    // show feed list data
     showListFeedData: builder.query({
-      query:() => "/feed/categories/",
-      providesTags:["feed"]
+      query: () => "/feed/categories/",
+      providesTags: ["feed"],
     }),
     // talk section recorded categroy
     showTalkRecordedCategary: builder.query({
-      query:() => "/talks/categories/",
-      providesTags:["recorded"]
+      query: () => "/talks/categories/",
+      providesTags: ["recorded"],
     }),
     // talk section show data
     showTalkRecordedData: builder.query({
-      query:() => "/talks/archived/",
+      query: () => "/talks/archived/",
+    }),
+
+    // show upcomming Livestrems
+    showUpcommingLivestremsAllData: builder.query({
+      query: () => "/talks/upcoming/",
+      providesTags: ["register"],
+    }),
+    // show filter data for date
+    showFilterData: builder.query({
+      query: (date) => `/talks/schedule/?date=${date}`,
+      providesTags: ["register"],
+    }),
+
+    bookingUpCommingLiveStrim: builder.mutation({
+      query: (id) => ({
+        url: `/talks/upcoming/${id}/register/`,
+        method: "POST",
+      }),
+      invalidatesTags: ["register"],
+    }),
+
+    cencelBookingUpCommingLiveStrim: builder.mutation({
+      query: (id) => ({
+        url: `/talks/upcoming/${id}/unregister/`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["register"],
+    }),
+
+    // update profile
+    updateProfileInpormation: builder.mutation({
+      query: (body) => ({
+        url: `/accounts/profile/`,
+        method: "PUT",
+        body,
+      }),
+    }),
+
+    showSimulation: builder.query({
+      query: () => "/tasks/",
+      providesTags: ["simulation"],
+    }),
+    showSimulationCategory: builder.query({
+      query: (id) => `/tasks/${id}/categories/`,
+      providesTags: ["simulation"],
+    }),
+    // show Simulation category mcq
+    showSimulationCategoryQuestion: builder.query({
+      query: ({ taskId, categoryId }) =>
+        `/tasks/${taskId}/categories/${categoryId}/`,
+      providesTags: ["simulation"],
+    }),
+
+    showSimulationCategoryAllQuestion: builder.query({
+      query: ({ taskId, categoryId, simLevel }) =>
+        `/tasks/${taskId}/categories/${categoryId}/sim/${simLevel}/`,
+      providesTags: ["simulation"],
+    }),
+
+    simulationQuestionSubmit: builder.mutation({
+      query: (data) => ({
+        url: "/submit-answer/",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["simulation"],
+    }),
+
+
+    showCompeted: builder.query({
+      query: () => "/videos/completed/",
+    }),
+
+    showInProgress:builder.query({
+      query:() =>"/videos/inprogress/",
+    }),
+
+
+    // video
+
+    showVideoCategory: builder.query({
+      query:() => "/videos/categories/"
+    }),
+
+    showVideoTopic:builder.query({
+      query:(id) =>`/videos/categories/${id}/topics/`
+    }),
+
+    showVideoTopicData: builder.query({
+      query:(id) =>`/videos/categories/${id}/playlists/`
+    }),
+
+    showAllVideoDetails:builder.query({
+      query:(id) =>`/videos/playlists/${id}/`
+    }),
+
+    showSuggestedVide:builder.query({
+      query: (id) =>`/videos/playlists/${id}/suggested/`
     })
+
+
+
+
+
+
+
+
+
+
+
 
   }),
 });
 
 export const {
   useShowProfileInformationQuery,
+  useShowProfileOverViewQuery,
+  useShowProfileLeaderBoradQuery,
   useShowFeedDataQuery,
   useShowListFeedDataQuery,
   useShowTalkRecordedCategaryQuery,
   useShowTalkRecordedDataQuery,
 
-  
+  useShowUpcommingLivestremsAllDataQuery,
+  useShowFilterDataQuery,
+  useBookingUpCommingLiveStrimMutation,
+  useCencelBookingUpCommingLiveStrimMutation,
+  useUpdateProfileInpormationMutation,
+
+  useShowSimulationQuery,
+  useShowSimulationCategoryQuery,
+  useShowSimulationCategoryQuestionQuery,
+  useShowSimulationCategoryAllQuestionQuery,
+  useSimulationQuestionSubmitMutation,
+
+  useShowCompetedQuery,
+  useShowInProgressQuery,
+
+
+  useShowVideoCategoryQuery,
+  useShowVideoTopicQuery,
+  useShowVideoTopicDataQuery,
+  useShowAllVideoDetailsQuery,
+  useShowSuggestedVideQuery,
 } = baseApi;

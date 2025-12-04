@@ -1,246 +1,233 @@
-import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { HiMenuAlt3, HiX } from "react-icons/hi"; // Hamburger and close icons
+import { HiMenuAlt3, HiX, HiChevronDown } from "react-icons/hi";
 import image from "../../image/Frame 11.png";
+import { useShowProfileInformationQuery } from "../../redux/features/baseApi";
 
-// Animation variants for NavLink
-const linkVariants = {
-  initial: { scale: 1, opacity: 1 },
-  hover: {
-    scale: 1.1,
-    color: "#3B82F6",
-    transition: { duration: 0.3, ease: "easeInOut" },
-  },
-};
-
-// Animation variants for buttons
-const buttonVariants = {
-  initial: { scale: 1, opacity: 1 },
-  hover: {
-    scale: 1.05,
-    backgroundColor: "#2563EB",
-    transition: { duration: 0.3, ease: "easeInOut" },
-  },
-};
-
-// Animation for underline effect
-const underlineVariants = {
-  initial: { width: 0 },
-  hover: {
-    width: "100%",
-    transition: { duration: 0.3, ease: "easeInOut" },
-  },
-};
-
-const menuVariants = {
-  hidden: {
-    x: "100%", 
-    opacity: 0,
-    transition: { duration: 0.3, ease: "easeInOut" },
-  },
-  visible: {
-    x: 0, // Slide in to view
-    opacity: 1,
-    transition: { duration: 0.3, ease: "easeInOut" },
-  },
-};
-
-function Navbar() {
+const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const navigate = useNavigate();
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  const token = localStorage.getItem("access_token");
+  const BASE_URL = "http://10.10.13.60:8002/";
+  const {
+    data: profileInfo,
+    isLoading,
+    refetch,
+  } = useShowProfileInformationQuery(undefined, {
+    skip: !token,
+  });
+
+  const user = profileInfo?.user;
+
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    setIsProfileOpen(false);
+    navigate("/login");
   };
 
+  // Remove automatic refetch on mount (RTK does first fetch automatically)
+  // Only refetch when menu opens IF token exists
+  const toggleProfile = () => {
+    setIsProfileOpen((prev) => !prev);
+    if (!isProfileOpen && token) {
+      refetch();
+    }
+  };
+
+  // close dropdown on click outside
+  useEffect(() => {
+    const close = (e) => {
+      if (!e.target.closest(".profile-dropdown")) {
+        setIsProfileOpen(false);
+      }
+    };
+    document.addEventListener("click", close);
+    return () => document.removeEventListener("click", close);
+  }, []);
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
   return (
-    <div className="flex items-center justify-between container mx-auto py-4 poppins relative z-60">
+    <div className="flex items-center justify-between container mx-auto py-4 poppins relative z-50">
       {/* Logo */}
       <div>
-        <img src={image} className="h-10" alt="Logo" />
+        <img src={image} className="h-18" alt="Logo" />
       </div>
 
       {/* Desktop Navigation */}
-      <div className="hidden md:flex items-center space-x-4">
+      <div className="hidden md:flex items-center space-x-8">
         <NavLink
           to="/about"
           className={({ isActive }) =>
-            `relative text-[18px] font-semibold ${
-              isActive ? "text-gray-800" : "text-gray-600"
+            `text-[18px] font-semibold ${
+              isActive ? "text-gray-900" : "text-gray-600"
             }`
           }
         >
-          {({ isActive }) => (
-            <motion.div
-              variants={linkVariants}
-              initial="initial"
-              whileHover="hover"
-              className="inline-block"
-            >
-              About
-              <motion.div
-                variants={underlineVariants}
-                initial="initial"
-                whileHover="hover"
-                className="absolute bottom-0 left-0 h-[2px] bg-blue-500"
-              />
-            </motion.div>
-          )}
+          About
         </NavLink>
-        {/* <NavLink
-          to="/pricing"
-          className={({ isActive }) =>
-            `relative text-[18px] font-semibold ${
-              isActive ? "text-gray-800" : "text-gray-600"
-            }`
-          }
-        >
-          {({ isActive }) => (
-            <motion.div
-              variants={linkVariants}
-              initial="initial"
-              whileHover="hover"
-              className="inline-block"
+      </div>
+
+      {/* Right Side */}
+      <div className="flex items-center space-x-4">
+        {/* Desktop: Profile */}
+        <div className="hidden md:block relative profile-dropdown">
+          {isLoading ? (
+            <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse" />
+          ) : user ? (
+            <button
+              onClick={toggleProfile}
+              className="flex items-center space-x-3 focus:outline-none"
             >
-              Pricing
-              <motion.div
-                variants={underlineVariants}
-                initial="initial"
-                whileHover="hover"
-                className="absolute bottom-0 left-0 h-[2px] bg-blue-500"
+              <img
+                src={
+                  user.profile_picture
+                    ? `${BASE_URL}${user.profile_picture}`
+                    : "https://via.placeholder.com/40"
+                }
+                alt={user.name}
+                className="w-10 h-10 rounded-full object-cover border-2 border-blue-500"
               />
-            </motion.div>
+              <span className="font-medium text-gray-800">{user.name}</span>
+              <HiChevronDown
+                className={`transition-transform ${
+                  isProfileOpen ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+          ) : (
+            <NavLink to="/login">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                className="bg-[#407BFF] text-white px-6 py-2.5 rounded-lg font-medium"
+              >
+                Sign in
+              </motion.button>
+            </NavLink>
           )}
-        </NavLink> */}
-      </div>
 
-      {/* Desktop Buttons */}
-      <div className="hidden md:flex space-x-4">
-        <motion.button
-          variants={buttonVariants}
-          initial="initial"
-          whileHover="hover"
-          className="text-black py-2 px-3 rounded-md lg:text-[18px]"
-        >
-       
-        </motion.button>
-       <NavLink to="/login">
-         <motion.button
-          variants={buttonVariants}
-          initial="initial"
-          whileHover="hover"
-          className="bg-[#407BFF] text-white py-2 px-3 rounded-md lg:text-[18px]"
-        >
-          Sign in
-        </motion.button>
-       </NavLink>
-      </div>
+          {/* Desktop Dropdown */}
+          <AnimatePresence>
+            {isProfileOpen && user && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="absolute right-0 mt-3 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50"
+              >
+                <NavLink
+                  to="/dashboard"
+                  onClick={() => setIsProfileOpen(false)}
+                  className="block px-4 py-2 text-gray-700 hover:bg-blue-50 transition"
+                >
+                  Dashboard
+                </NavLink>
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition"
+                >
+                  Logout
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
-      {/* Hamburger Icon for Mobile */}
-      <div className="md:hidden">
-        <motion.button
-          whileTap={{ scale: 0.9 }}
+        {/* Mobile Hamburger */}
+        <button
           onClick={toggleMenu}
-          className="text-3xl text-gray-800"
+          className="md:hidden text-3xl text-gray-800"
         >
           {isMenuOpen ? <HiX /> : <HiMenuAlt3 />}
-        </motion.button>
+        </button>
       </div>
 
-      {/* Mobile Side Menu */}
+      {/* Mobile Sidebar */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            variants={menuVariants}
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-            className="fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 md:hidden flex flex-col items-start p-6 space-y-4"
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            className="fixed inset-y-0 right-0 w-64 bg-white shadow-2xl z-50 p-6 flex flex-col"
           >
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={toggleMenu}
-              className="self-end text-3xl text-gray-800"
-            >
+            <button onClick={toggleMenu} className="self-end mb-8 text-3xl">
               <HiX />
-            </motion.button>
+            </button>
+
             <NavLink
               to="/about"
               onClick={toggleMenu}
-              className={({ isActive }) =>
-                `text-[18px] font-semibold ${
-                  isActive ? "text-gray-800" : "text-gray-600"
-                }`
-              }
+              className="text-lg font-medium text-gray-700 py-3"
             >
-              {({ isActive }) => (
-                <motion.div
-                  variants={linkVariants}
-                  initial="initial"
-                  whileHover="hover"
-                  className="inline-block"
-                >
-                  About
-                  <motion.div
-                    variants={underlineVariants}
-                    initial="initial"
-                    whileHover="hover"
-                    className="absolute bottom-0 left-0 h-[2px] bg-blue-500"
-                  />
-                </motion.div>
-              )}
+              About
             </NavLink>
-            <NavLink
-              to="/pricing"
-              onClick={toggleMenu}
-              className={({ isActive }) =>
-                `text-[18px] font-semibold ${
-                  isActive ? "text-gray-800" : "text-gray-600"
-                }`
-              }
-            >
-              {({ isActive }) => (
-                <motion.div
-                  variants={linkVariants}
-                  initial="initial"
-                  whileHover="hover"
-                  className="inline-block"
-                >
-                  Pricing
-                  <motion.div
-                    variants={underlineVariants}
-                    initial="initial"
-                    whileHover="hover"
-                    className="absolute bottom-0 left-0 h-[2px] bg-blue-500"
+
+            {/* Mobile: Profile */}
+            {!isLoading && user ? (
+              <div className="mt-6 border-t pt-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <img
+                    src={
+                      user.profile_picture
+                        ? `${import.meta.env.VITE_API_URL}${
+                            user.profile_picture
+                          }`
+                        : "https://via.placeholder.com/40"
+                    }
+                    alt={user.name}
+                    className="w-12 h-12 rounded-full"
                   />
-                </motion.div>
-              )}
-            </NavLink>
-            <motion.button
-              variants={buttonVariants}
-              initial="initial"
-              whileHover="hover"
-              onClick={toggleMenu}
-              className="text-black py-2 px-3 rounded-md w-full text-left"
-            >
-          
-            </motion.button>
-           <NavLink to="/login">
-             <motion.button
-              variants={buttonVariants}
-              initial="initial"
-              whileHover="hover"
-              onClick={toggleMenu}
-              className="bg-[#407BFF] text-white py-2 px-3 rounded-md w-full text-left"
-            >
-              Sign in
-            </motion.button>
-           </NavLink>
+                  <div>
+                    <p className="font-semibold">{user.name}</p>
+                    <p className="text-sm text-gray-500">{user.email}</p>
+                  </div>
+                </div>
+
+                <NavLink
+                  to="/dashboard"
+                  onClick={toggleMenu}
+                  className="block py-3 text-blue-600 font-medium"
+                >
+                  Dashboard
+                </NavLink>
+
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    toggleMenu();
+                  }}
+                  className="w-full text-left py-3 text-red-600 font-medium"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <NavLink
+                to="/login"
+                onClick={toggleMenu}
+                className="mt-8 bg-[#407BFF] text-white text-center py-3 rounded-lg font-medium"
+              >
+                Sign in
+              </NavLink>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Overlay */}
+      {isMenuOpen && (
+        <div
+          onClick={toggleMenu}
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+        />
+      )}
     </div>
   );
-}
+};
 
 export default Navbar;

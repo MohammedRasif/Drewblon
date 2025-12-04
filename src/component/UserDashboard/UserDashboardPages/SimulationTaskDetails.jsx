@@ -1,76 +1,45 @@
 "use client";
 import { IoChevronBack } from "react-icons/io5";
-import { NavLink } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
+import { useShowSimulationCategoryQuery } from "../../../redux/features/baseApi";
+import { useEffect } from "react";
 
 function SimulationTaskDetails() {
-  const categoryData = {
-    title: "Business",
-    progress: 10,
-    heroImage:
-      "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759822517/what-type-of-learner-is-your-child-min-scaled_mkm8a1.jpg",
-    subcategories: [
-      {
-        id: 1,
-        name: "Accounting",
-        image:
-          "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759822517/1_2LywpPsQnnuRwQpDVrydAQ_cfd3ev.jpg",
-        progress: 25,
-      },
-      {
-        id: 2,
-        name: "Marketing",
-        image:
-          "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759822517/1_yjcdof.jpg",
-        progress: 0,
-      },
-      {
-        id: 3,
-        name: "Economics",
-        image:
-          "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759812746/day-picture-id1163588010_xjbdnc.jpg",
-        progress: 0,
-      },
-      {
-        id: 4,
-        name: "Supply Chain",
-        image:
-          "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759812746/shutterstock_1847661151.jpg.optimal_jdopzy.jpg",
-        progress: 0,
-      },
-      {
-        id: 5,
-        name: "Finance",
-        image:
-          "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1760418336/067134af3ee4b96f623780d3c14577fca6342796_yzsy4q.jpg",
-        progress: 0,
-      },
-      {
-        id: 6,
-        name: "Risk Compliance",
-        image:
-          "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1760418336/6829c41bbaf9b7c592c7c376b701b859afc0bdd4_x6g8we.jpg",
-        progress: 0,
-      },
-      {
-        id: 7,
-        name: "Entrepreneurship",
-        image:
-          "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1760418336/b075a41637a05c9217374a2e411f8a04d536e2da_x1m4np.jpg",
-        progress: 0,
-      },
-      {
-        id: 8,
-        name: "Financial Services",
-        image:
-          "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759822517/lifelong-learning-success_vlpiej.webp",
-        progress: 0,
-      },
-    ],
-  };
+  const { id } = useParams();
+  const { data: categoryData, isLoading } = useShowSimulationCategoryQuery(id);
+
+  // Store task_id in localStorage when data is fetched
+  useEffect(() => {
+    if (categoryData?.task_id) {
+      localStorage.setItem("SimulationCategory", categoryData.task_id);
+    }
+  }, [categoryData]);
 
   const handleBack = () => {
     window.history.back();
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="mb-6 flex items-center gap-3">
+          <button
+            onClick={handleBack}
+            className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-gray-200 transition-colors"
+          >
+            <IoChevronBack className="w-5 h-5 text-gray-700" />
+          </button>
+          <div className="h-8 w-32 bg-gray-200 animate-pulse rounded" />
+        </div>
+        <div className="w-[50vh] h-56 bg-gray-200 animate-pulse rounded-2xl mb-8" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-48 bg-gray-200 animate-pulse rounded-xl" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -83,7 +52,7 @@ function SimulationTaskDetails() {
           <IoChevronBack className="w-5 h-5 text-gray-700" />
         </button>
         <h1 className="text-2xl font-semibold text-gray-900">
-          {categoryData.title}
+          {categoryData?.task_name}
         </h1>
       </div>
 
@@ -91,8 +60,11 @@ function SimulationTaskDetails() {
       <div className="mb-8">
         <div className="relative w-[50vh] h-56 rounded-2xl overflow-hidden group cursor-pointer">
           <img
-            src={categoryData.heroImage || "/placeholder.svg"}
-            alt={categoryData.title}
+            src={
+              categoryData?.task_cover_image ||
+              "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1751196563/b170870007dfa419295d949814474ab2_t_qm2pcq.jpg"
+            }
+            alt={categoryData?.task_name}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t bg-black/40 via-black/20 to-transparent" />
@@ -122,7 +94,7 @@ function SimulationTaskDetails() {
                     2 *
                     Math.PI *
                     30 *
-                    (1 - Math.min(categoryData.progress, 100) / 100)
+                    (1 - Math.min(categoryData?.completed || 0, 100) / 100)
                   }`}
                   strokeLinecap="round"
                   className="transition-all duration-1000 ease-in-out shadow-lg"
@@ -130,7 +102,7 @@ function SimulationTaskDetails() {
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
                 <span className="text-white text-base font-semibold font-sans">
-                  {Math.min(categoryData.progress, 100)}%
+                  {Math.round(categoryData?.completed || 0)}%
                 </span>
               </div>
             </div>
@@ -139,7 +111,7 @@ function SimulationTaskDetails() {
           {/* Category Label */}
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
             <h2 className="text-white text-xl font-semibold">
-              {categoryData.title}
+              {categoryData?.task_name}
             </h2>
           </div>
         </div>
@@ -149,17 +121,20 @@ function SimulationTaskDetails() {
       <div>
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Category</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {categoryData.subcategories.map((subcategory) => (
+          {categoryData?.categories?.map((subcategory) => (
             <NavLink
               to={`/dashboard/simulationQuestion/${subcategory.id}`}
               key={subcategory.id}
+              onClick={() => {
+                localStorage.setItem("task_id", categoryData.task_id);
+              }}
             >
-              <div
-                key={subcategory.id}
-                className="relative h-46 rounded-xl overflow-hidden group cursor-pointer"
-              >
+              <div className="relative h-46 rounded-xl overflow-hidden group cursor-pointer">
                 <img
-                  src={subcategory.image || "/placeholder.svg"}
+                  src={
+                    subcategory.cover_image ||
+                    "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1751196563/b170870007dfa419295d949814474ab2_t_qm2pcq.jpg"
+                  }
                   alt={subcategory.name}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
@@ -173,16 +148,16 @@ function SimulationTaskDetails() {
                 </div>
 
                 <div className="absolute bottom-7 pr-2 left-5 right-3 flex justify-between text-xs text-white opacity-90">
-                  <div>Level:3/10</div>
-                  <div>48%</div>
+                  <div>{subcategory.question_count} Questions</div>
+                  <div>{Math.round(subcategory.completed)}%</div>
                 </div>
 
                 {/* Progress Bar (only if progress > 0) */}
-                {subcategory.progress > 0 && (
+                {subcategory.completed > 0 && (
                   <div className="absolute bottom-3 left-0 right-0 h-[8px] bg-white rounded-full mx-5">
                     <div
                       className="h-full bg-blue-500 transition-all rounded-xl duration-300"
-                      style={{ width: `${subcategory.progress}%` }}
+                      style={{ width: `${subcategory.completed}%` }}
                     />
                   </div>
                 )}

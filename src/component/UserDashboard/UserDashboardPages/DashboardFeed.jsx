@@ -14,13 +14,11 @@ function DashboardFeed() {
   const [expandedPosts, setExpandedPosts] = useState(new Set());
   const [commentInputs, setCommentInputs] = useState({});
 
-  // Fetch categories and posts from API
   const { data: categoryData = [], isLoading: catLoading } =
     useShowListFeedDataQuery();
   const { data: postData = [], isLoading: postLoading } =
     useShowFeedDataQuery();
 
-  // Extract categories with "All categories" at the top
   const categories = useMemo(() => {
     if (!categoryData || categoryData.length === 0) return ["All categories"];
     const catNames = categoryData.map((cat) => cat.name);

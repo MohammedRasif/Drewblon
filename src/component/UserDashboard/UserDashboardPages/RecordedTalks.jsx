@@ -43,8 +43,8 @@ function RecordedTalks({ talks, selectedCategory, isLoading }) {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {filteredTalks.map((talk) => {
         const videoUrl = `${MEDIA_URL}${talk.talk_file}`;
-        const thumbnailUrl = talk.thumbnail
-          ? `${MEDIA_URL}${talk.thumbnail}`
+        const thumbnailUrl = `${MEDIA_URL}${talk.thumbnail}`
+          ? talk.thumbnail
           : "/placeholder-video.jpg";
 
         const isPlaying = playingId === talk.id;
@@ -60,6 +60,7 @@ function RecordedTalks({ talks, selectedCategory, isLoading }) {
                   src={videoUrl}
                   controls
                   autoPlay
+                  playsInline
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -73,9 +74,9 @@ function RecordedTalks({ talks, selectedCategory, isLoading }) {
                     onClick={() => setPlayingId(talk.id)}
                     className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 cursor-pointer hover:bg-opacity-50 transition"
                   >
-                    <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transform hover:scale-110 transition">
+                    <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transform hover:scale-110 transition">
                       <svg
-                        className="w-10 h-10 text-white ml-2"
+                        className="w-10 h-10 text-white ml-1"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -90,7 +91,7 @@ function RecordedTalks({ talks, selectedCategory, isLoading }) {
                 Video
               </div>
             </div>
-
+ 
             {/* Content */}
             <div className="p-5">
               <div className="flex items-center justify-between mb-3">
@@ -114,7 +115,7 @@ function RecordedTalks({ talks, selectedCategory, isLoading }) {
               {!isPlaying && (
                 <button
                   onClick={() => setPlayingId(talk.id)}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition transform hover:scale-105"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg transition transform hover:scale-105"
                 >
                   Play Video
                 </button>

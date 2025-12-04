@@ -1,22 +1,45 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MdKeyboardVoice } from "react-icons/md";
 import { RiVoiceprintLine } from "react-icons/ri";
 import { motion } from "framer-motion";
 import RecordedTalks from "./RecordedTalks";
 import Upcomming from "./Upcomming";
 import {
+  useBookingUpCommingLiveStrimMutation,
+  useCencelBookingUpCommingLiveStrimMutation,
+  useShowFilterDataQuery,
   useShowTalkRecordedCategaryQuery,
   useShowTalkRecordedDataQuery,
+  useShowUpcommingLivestremsAllDataQuery,
 } from "../../../redux/features/baseApi";
 
 function DashboardTalks() {
   const [activeTab, setActiveTab] = useState("recorded");
   const [selectedCategory, setSelectedCategory] = useState("All categories");
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  // Format date as YYYY-MM-DD for API
+  const formatDateForAPI = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   // Fetch categories
-  const { data: categoryData = [], isLoading: catLoading } = useShowTalkRecordedCategaryQuery();
-  const { data: recordResponse, isLoading: recordLoading } = useShowTalkRecordedDataQuery();
+  const { data: categoryData = [], isLoading: catLoading } =
+    useShowTalkRecordedCategaryQuery();
+  const { data: recordResponse, isLoading: recordLoading } =
+    useShowTalkRecordedDataQuery();
+
+  const { data: showUpcommingLiveSctrimAllData } =
+    useShowUpcommingLivestremsAllDataQuery();
+  const { data: showFilterData } = useShowFilterDataQuery(
+    formatDateForAPI(selectedDate)
+  );
+  const [registerMeeting] = useBookingUpCommingLiveStrimMutation();
+  const [cencelMeeting] = useCencelBookingUpCommingLiveStrimMutation();
 
   // Extract category names from API
   const categories = [
@@ -38,10 +61,10 @@ function DashboardTalks() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
-
         <h1 className="text-4xl font-bold text-gray-900 mb-3">Expert Talks</h1>
         <p className="text-gray-600 mb-8">
-          Learn from industry professionals and academic experts through live sessions and recorded talks
+          Learn from industry professionals and academic experts through live
+          sessions and recorded talks
         </p>
 
         {/* Tab Buttons */}
@@ -103,7 +126,15 @@ function DashboardTalks() {
             />
           </>
         ) : (
-          <Upcomming />
+          <Upcomming
+            showUpcommingLiveSctrimAllData={showUpcommingLiveSctrimAllData}
+            showFilterData={showFilterData}
+            registerMeeting={registerMeeting}
+            cencelMeeting={cencelMeeting}
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+            formatDateForAPI={formatDateForAPI}
+          />
         )}
       </div>
     </div>

@@ -1,14 +1,21 @@
 "use client";
-
 import { useState } from "react";
 import DashbaordProfile from "./DashbaordProfile";
-import DashbaordInterst from "./DashbaordInterst";
 import DashboardSubscritpion from "./DashboardSubscritpion";
 import { BiArrowBack } from "react-icons/bi";
 import { NavLink } from "react-router-dom";
+import {
+  useShowProfileInformationQuery,
+  useUpdateProfileInpormationMutation,
+} from "../../../redux/features/baseApi";
+import DashboardInterest from "./DashbaordInterst";
 
 function DashboardProfileEdit() {
   const [activeTab, setActiveTab] = useState("personal");
+
+  const { data: profileData, isLoading } = useShowProfileInformationQuery();
+  const [updateProfileInpormation, { isLoading: isUpdating }] =
+    useUpdateProfileInpormationMutation();
 
   const tabs = [
     { id: "personal", label: "Personal Information" },
@@ -17,61 +24,65 @@ function DashboardProfileEdit() {
   ];
 
   const renderContent = () => {
+    if (isLoading) return <div className="p-8 text-center">Loading...</div>;
+
+    const user = profileData?.user || {};
+
     switch (activeTab) {
       case "personal":
-        return (
-          <div>
-            <DashbaordProfile />
-          </div>
-        );
+        return <DashbaordProfile user={user} />;
       case "interests":
         return (
-          <div>
-            <DashbaordInterst />
-          </div>
+          <DashboardInterest
+            user={user}
+            updateProfile={updateProfileInpormation}
+            isUpdating={isUpdating}
+          />
         );
       case "subscription":
-        return (
-          <div>
-            <DashboardSubscritpion />
-          </div>
-        );
+        return <DashboardSubscritpion />;
       default:
         return null;
     }
   };
 
   return (
-    <div className="min-h-screen ">
-      <div className="flex gap-5 container mx-auto py-4">
+    <div className="min-h-screen bg-gray-50">
+      <div className="flex gap-8 container mx-auto py-8">
         {/* Sidebar */}
-        <div className="w-1/6">
-          <div className="flex ">
+        <div className="w-1/5">
+          <div className="flex items-start gap-4">
             <NavLink to="/dashboard">
-            <BiArrowBack  size={24} className="mt-[24px] hover:text-[#615FFF]"/>
-          </NavLink>
-          <div className=" rounded-lg p-4">
-            <nav className="space-y-2">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`w-full text-left px-4 py-3 rounded-lg text-[14px] font-medium transition-colors ${
-                    activeTab === tab.id
-                      ? "bg-blue-50 text-blue-600 border-l-2 border-blue-600"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </nav>
-          </div>
+              <BiArrowBack
+                size={28}
+                className="mt-6 hover:text-[#615FFF] transition"
+              />
+            </NavLink>
+
+            <div className="p-4 w-full">
+              <nav className="space-y-2">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`w-full text-left px-5 py-3 rounded-lg text-sm font-medium transition-all ${
+                      activeTab === tab.id
+                        ? "bg-blue-50 text-blue-600 border-l-4 border-blue-600"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </nav>
+            </div>
           </div>
         </div>
 
         {/* Main Content */}
-        <div className="w-4/5">{renderContent()}</div>
+        <div className="w-4/5 bg-white rounded-xl shadow-sm p-8">
+          {renderContent()}
+        </div>
       </div>
     </div>
   );

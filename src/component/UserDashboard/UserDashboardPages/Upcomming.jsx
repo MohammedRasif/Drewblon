@@ -1,161 +1,40 @@
 "use client";
 
 import { useState } from "react";
+import { ToastContainer } from "react-toastify";
 
-function Upcomming() {
-  const [selectedDate, setSelectedDate] = useState(new Date(2025, 11, 29)); // Set to a date with data for demo
-  const [currentMonth, setCurrentMonth] = useState(new Date(2025, 11, 1)); // Set to December 2025 for demo
+function Upcomming({
+  showUpcommingLiveSctrimAllData = {},
+  showFilterData = {},
+  registerMeeting,
+  cencelMeeting,
+  selectedDate,
+  setSelectedDate,
+  formatDateForAPI,
+}) {
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [loading, setLoading] = useState({});
 
-  // Sample data for livestreams
-  const livestreams = [
-    {
-      id: 1,
-      title: "Breaking Into Tech: A Software Engineer's Journey",
-      description:
-        "Learn about the path from computer science student to working at a top tech company, including interview tips and career advice.",
-      author: "Ahmad Nur Fawaid",
-      category: "Academic",
-      thumbnail:
-        "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759822517/better-learner-cover_zfyxqo.jpg",
-      duration: "2-3 hrs",
-      date: new Date(2025, 11, 29, 14, 30),
-      status: "registered",
-      type: "today",
-    },
-    {
-      id: 2,
-      title: "Breaking Into Tech: A Software Engineer's Journey",
-      description:
-        "Learn about the path from computer science student to working at a top tech company, including interview tips and career advice.",
-      author: "Ahmad Nur Fawaid",
-      category: "Academic",
-      thumbnail:
-        "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759822517/1_yjcdof.jpg",
-      duration: "2-3 hrs",
-      date: new Date(2025, 11, 29, 16, 0),
-      status: "available",
-      type: "today",
-    },
-    {
-      id: 3,
-      title: "Youth Leadership Summit",
-      description: "Empowering young leaders and entrepreneurs.",
-      author: "Ahmad Nur Fawaid",
-      category: "Academic",
-      thumbnail:
-        "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759812746/day-picture-id1163588010_xjbdnc.jpg",
-      duration: "2 hrs",
-      date: new Date(2025, 11, 30, 10, 0),
-      status: "reminder",
-      type: "reminder",
-    },
-    {
-      id: 4,
-      title: "Cultural Fest & Talent Show",
-      description: "Celebrating diverse cultures and showcasing music, art...",
-      author: "Ahmad Nur Fawaid",
-      category: "Academic",
-      thumbnail:
-        "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759822517/blog_V0otReuP_lnjvpf.jpg",
-      duration: "3 hrs",
-      date: new Date(2025, 11, 30, 15, 0),
-      status: "reminder",
-      type: "reminder",
-    },
-    {
-      id: 5,
-      title: "Breaking Into Tech: A Software Engineer's Journey",
-      description:
-        "Learn about the path from computer science student to working at a top tech company, including interview tips and career advice.",
-      author: "Ahmad Nur Fawaid",
-      category: "Academic",
-      thumbnail:
-        "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759822517/what-type-of-learner-is-your-child-min-scaled_mkm8a1.jpg",
-      duration: "2-3 hrs",
-      date: new Date(2025, 11, 28, 9, 0),
-      status: "registered",
-      type: "registered",
-    },
-    {
-      id: 6,
-      title: "Community Volunteering",
-      description: "A day dedicated to social work and community service.",
-      author: "Ahmad Nur Fawaid",
-      category: "Academic",
-      thumbnail:
-        "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759822517/life-long-learner_vekkdy.jpg",
-      duration: "4 hrs",
-      date: new Date(2025, 11, 31, 11, 0),
-      status: "registered",
-      type: "registered",
-    },
-    {
-      id: 7,
-      title: "Book Swap & Literary Discussion",
-      description: "Exchange books and discover new favorite reads.",
-      author: "Ahmad Nur Fawaid",
-      category: "Academic",
-      thumbnail:
-        "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759822518/screen-shot-2017-10-07-at-10-56-52-am_sjomrm.png",
-      duration: "2 hrs",
-      date: new Date(2025, 11, 31, 14, 0),
-      status: "registered",
-      type: "registered",
-    },
-  ];
+  // Get all livestreams from the main API
+  const allLivestreams = showUpcommingLiveSctrimAllData?.results || [];
 
-  // Helper function to check if two dates are the same (ignoring time)
-  const isSameDate = (date1, date2) => {
-    return (
-      date1.getFullYear() === date2.getFullYear() &&
-      date1.getMonth() === date2.getMonth() &&
-      date1.getDate() === date2.getDate()
-    );
-  };
+  // Get filtered data for selected date
+  const upcomingTalksForDate = showFilterData?.upcoming_talks_for_date || [];
+  const todayScheduledLivestreams =
+    showFilterData?.today_scheduled_livestreams || [];
+  const upcomingRegisteredTalks =
+    showFilterData?.upcoming_registered_talks || [];
 
-  // Get dates that have events
+  // Get dates that have events from all livestreams
   const getDatesWithEvents = () => {
     const dates = new Set();
-    livestreams.forEach((stream) => {
-      const dateStr = `${stream.date.getFullYear()}-${String(
-        stream.date.getMonth() + 1
-      ).padStart(2, "0")}-${String(stream.date.getDate()).padStart(2, "0")}`;
-      dates.add(dateStr);
+    allLivestreams.forEach((stream) => {
+      dates.add(stream.date);
     });
     return dates;
   };
 
   const datesWithEvents = getDatesWithEvents();
-
-  // Get all livestreams (no filter, always all)
-  const getAllLivestreams = () => {
-    return livestreams;
-  };
-
-  // Get reminders for selected date
-  const getRemindersForDate = () => {
-    return livestreams.filter(
-      (stream) =>
-        stream.type === "reminder" && isSameDate(stream.date, selectedDate)
-    );
-  };
-
-  // Get today's livestreams (only if selected date is today)
-  const getTodayLivestreamsForDate = () => {
-    // For demo, treat selectedDate as "today" if it matches any data date
-    return livestreams.filter(
-      (stream) =>
-        stream.type === "today" && isSameDate(stream.date, selectedDate)
-    );
-  };
-
-  // Get registered livestreams for selected date
-  const getRegisteredLivestreamsForDate = () => {
-    return livestreams.filter(
-      (stream) =>
-        stream.type === "registered" && isSameDate(stream.date, selectedDate)
-    );
-  };
 
   // Calendar helper functions
   const getDaysInMonth = (date) => {
@@ -178,11 +57,13 @@ function Upcomming() {
     });
   };
 
-  const formatTime = (date) => {
-    return date.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  const formatTime = (timeString) => {
+    if (!timeString) return "";
+    const [hours, minutes] = timeString.split(":");
+    const hour = parseInt(hours);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    const displayHour = hour % 12 || 12;
+    return `${displayHour}:${minutes} ${ampm}`;
   };
 
   const hasEvent = (day) => {
@@ -191,9 +72,7 @@ function Upcomming() {
       currentMonth.getMonth(),
       day
     );
-    const dateStr = `${checkDate.getFullYear()}-${String(
-      checkDate.getMonth() + 1
-    ).padStart(2, "0")}-${String(checkDate.getDate()).padStart(2, "0")}`;
+    const dateStr = formatDateForAPI(checkDate);
     return datesWithEvents.has(dateStr);
   };
 
@@ -226,13 +105,35 @@ function Upcomming() {
     );
   };
 
+  // Handle registration/cancellation
+  const handleRegisterToggle = async (id, isRegistered) => {
+    setLoading((prev) => ({ ...prev, [id]: true }));
+    try {
+      if (isRegistered) {
+        await cencelMeeting(id).unwrap();
+      } else {
+        await registerMeeting(id).unwrap();
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+    } finally {
+      setLoading((prev) => ({ ...prev, [id]: false }));
+    }
+  };
+
+  // Handle join meeting
+  const handleJoinMeeting = (meetingLink) => {
+    if (meetingLink) {
+      window.open(meetingLink, "_blank");
+    }
+  };
+
   const renderCalendar = () => {
     const daysInMonth = getDaysInMonth(currentMonth);
     const firstDay = getFirstDayOfMonth(currentMonth);
     const days = [];
     const weekDays = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
-    // Render week day headers
     const headers = weekDays.map((day, index) => (
       <div
         key={`header-${index}`}
@@ -242,12 +143,10 @@ function Upcomming() {
       </div>
     ));
 
-    // Render empty cells for days before month starts
     for (let i = 0; i < firstDay; i++) {
       days.push(<div key={`empty-${i}`} className="p-2"></div>);
     }
 
-    // Render days of the month
     for (let day = 1; day <= daysInMonth; day++) {
       const isSelected = isSelectedDate(day);
       const hasEventDot = hasEvent(day);
@@ -278,7 +177,6 @@ function Upcomming() {
 
     return (
       <div className="">
-        {/* Calendar header */}
         <div className="flex items-center justify-between mb-4">
           <button
             onClick={handlePrevMonth}
@@ -324,7 +222,6 @@ function Upcomming() {
           </button>
         </div>
 
-        {/* Calendar grid */}
         <div className="grid grid-cols-7 gap-1">
           {headers}
           {days}
@@ -334,57 +231,58 @@ function Upcomming() {
   };
 
   const LivestreamCard = ({ stream, isLarge = false }) => {
+    const isRegistered = stream.is_registered || false;
+    const isLoadingAction = loading[stream.id] || false;
+
     if (isLarge) {
       return (
         <div className="bg-white rounded-lg overflow-hidden border border-gray-200">
-          {/* Thumbnail */}
           <div className="relative">
             <img
               src={stream.thumbnail || "/placeholder.svg"}
               alt={stream.title}
               className="w-full h-48 object-cover"
             />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center">
-                <svg
-                  className="w-6 h-6 text-white ml-1"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              </div>
-            </div>
           </div>
 
-          {/* Content */}
           <div className="p-4">
-            {/* Author info */}
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                  {stream.counselor_photo ? (
+                    <img
+                      src={stream.counselor_photo}
+                      alt={stream.counselor_name}
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-xs font-medium text-gray-600">
+                      {stream.counselor_name?.charAt(0) || "?"}
+                    </span>
+                  )}
+                </div>
                 <div>
                   <p className="text-sm font-medium text-gray-800">
-                    {stream.author}
+                    {stream.counselor_name || stream.counselor || "Unknown"}
                   </p>
                   <p className="text-xs text-gray-500">
-                    {formatDate(stream.date)} at {formatTime(stream.date)}
+                    {stream.date} at {formatTime(stream.time)}
                   </p>
                 </div>
               </div>
               <span className="text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded">
-                {stream.category}
+                {stream.category_name || stream.category}
               </span>
             </div>
 
-            {/* Title and description */}
             <h3 className="text-base font-semibold text-gray-800 mb-2">
               {stream.title}
             </h3>
-            <p className="text-sm text-gray-600 mb-4">{stream.description}</p>
+            <p className="text-sm text-gray-600 mb-4">
+              {stream.caption || "No description available"}
+            </p>
 
-            {/* Footer */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-4 text-xs text-gray-500">
                 <span className="flex items-center gap-1">
                   <svg
@@ -397,10 +295,11 @@ function Upcomming() {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
                     />
                   </svg>
-                  {stream.duration}
+                  {stream.registration_count || 0}/
+                  {stream.participant_limit || 0} registered
                 </span>
                 <span className="flex items-center gap-1">
                   <svg
@@ -416,38 +315,57 @@ function Upcomming() {
                       d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                     />
                   </svg>
-                  {formatDate(stream.date)}
+                  {stream.date}
                 </span>
               </div>
             </div>
 
-            {/* Action button */}
             <div className="mt-4 flex space-x-3">
-              <button className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-medium text-sm flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors cursor-pointer">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                  />
-                </svg>
-                Join meeting
-              </button>
+              {isRegistered ? (
+                <>
+                  <button
+                    onClick={() => handleJoinMeeting(stream.meeting_link)}
+                    className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-medium text-sm flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors cursor-pointer"
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                      />
+                    </svg>
+                    Join meeting
+                  </button>
 
-              <button className="w-full text-red-600 py-2.5 rounded-lg font-medium text-sm hover:bg-red-50 transition-colors border cursor-pointer">
-                Cancel registration
-              </button>
+                  <button
+                    onClick={() => handleRegisterToggle(stream.id, true)}
+                    disabled={isLoadingAction}
+                    className="w-full text-red-600 py-2.5 rounded-lg font-medium text-sm hover:bg-red-50 transition-colors border cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isLoadingAction ? "Processing..." : "Cancel registration"}
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => handleRegisterToggle(stream.id, false)}
+                  disabled={isLoadingAction}
+                  className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-medium text-sm hover:bg-blue-700 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoadingAction ? "Processing..." : "Register"}
+                </button>
+              )}
             </div>
           </div>
         </div>
       );
     }
+
     // Small card for sidebar
     return (
       <div className="flex gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
@@ -461,17 +379,15 @@ function Upcomming() {
             {stream.title}
           </h4>
           <p className="text-xs text-gray-600 line-clamp-2">
-            {stream.description}
+            {stream.caption || "No description available"}
+          </p>
+          <p className="text-xs text-gray-500 mt-1">
+            {formatTime(stream.time)}
           </p>
         </div>
       </div>
     );
   };
-
-  const allLivestreams = getAllLivestreams();
-  const remindersForDate = getRemindersForDate();
-  const todayLivestreamsForDate = getTodayLivestreamsForDate();
-  const registeredLivestreamsForDate = getRegisteredLivestreamsForDate();
 
   const renderEmptyState = (sectionName) => (
     <div className="text-center py-8">
@@ -482,29 +398,35 @@ function Upcomming() {
   );
 
   return (
-    <div className="flex gap-6  bg-gray-50 min-h-screen">
-      {/* Left side - All Livestream cards (no filter) */}
+    <div className="flex gap-6 bg-gray-50 min-h-screen">
+      {/* Left side - All Livestream cards */}
       <div className="flex-1">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {allLivestreams.map((stream) => (
-            <LivestreamCard key={stream.id} stream={stream} isLarge={true} />
-          ))}
+          {allLivestreams.length > 0 ? (
+            allLivestreams.map((stream) => (
+              <LivestreamCard key={stream.id} stream={stream} isLarge={true} />
+            ))
+          ) : (
+            <div className="col-span-2 text-center py-12">
+              <p className="text-gray-500">No upcoming livestreams available</p>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Right side - Calendar and filtered lists for selected date */}
+      {/* Right side - Calendar and filtered lists */}
       <div className="w-80 flex-shrink-0">
         {/* Calendar */}
         <div className="bg-white rounded-lg p-4 mb-6 border border-gray-200 -mt-46">
           {renderCalendar()}
         </div>
 
-        {/* Reminders for selected date */}
+        {/* Upcoming talks for selected date */}
         <div className="bg-white rounded-lg p-4 mb-6 border border-gray-200">
           <h3 className="text-lg font-bold text-gray-800 mb-4">Reminders</h3>
-          {remindersForDate.length > 0 ? (
+          {upcomingTalksForDate.length > 0 ? (
             <div className="space-y-2">
-              {remindersForDate.map((stream) => (
+              {upcomingTalksForDate.map((stream) => (
                 <LivestreamCard
                   key={stream.id}
                   stream={stream}
@@ -517,14 +439,14 @@ function Upcomming() {
           )}
         </div>
 
-        {/* Today Livestreams for selected date */}
+        {/* Today Livestreams */}
         <div className="bg-white rounded-lg p-4 mb-6 border border-gray-200">
           <h3 className="text-lg font-bold text-gray-800 mb-4">
             Today Livestreams
           </h3>
-          {todayLivestreamsForDate.length > 0 ? (
+          {todayScheduledLivestreams.length > 0 ? (
             <div className="space-y-2">
-              {todayLivestreamsForDate.map((stream) => (
+              {todayScheduledLivestreams.map((stream) => (
                 <LivestreamCard
                   key={stream.id}
                   stream={stream}
@@ -537,14 +459,14 @@ function Upcomming() {
           )}
         </div>
 
-        {/* Registered Livestreams for selected date */}
+        {/* Registered Livestreams */}
         <div className="bg-white rounded-lg p-4 border border-gray-200">
           <h3 className="text-lg font-bold text-gray-800 mb-4">
             Registered Livestreams
           </h3>
-          {registeredLivestreamsForDate.length > 0 ? (
+          {upcomingRegisteredTalks.length > 0 ? (
             <div className="space-y-2">
-              {registeredLivestreamsForDate.map((stream) => (
+              {upcomingRegisteredTalks.map((stream) => (
                 <LivestreamCard
                   key={stream.id}
                   stream={stream}
@@ -557,6 +479,18 @@ function Upcomming() {
           )}
         </div>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 }
