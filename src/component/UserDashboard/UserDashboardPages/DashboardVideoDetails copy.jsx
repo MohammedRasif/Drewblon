@@ -7,8 +7,6 @@ import {
   useShowSuggestedVideQuery,
 } from "../../../redux/features/baseApi";
 
-const MEDIA_BASE_URL = "http://10.10.13.60:8002";
-
 function DashboardVideoDetails() {
   const { id } = useParams(); 
   console.log({id})
@@ -26,54 +24,19 @@ function DashboardVideoDetails() {
   const { data: suggestTopic, isLoading: suggestLoading } =
     useShowSuggestedVideQuery(id);
 
-    console.log({suggestTopic, playlistData})
+    console.log({suggestTopic})
 
   const videos = playlistData?.videos || [];
   const currentVideo = videos[activeLesson];
 
-
-   // Helper function to construct full video URL
-  const getVideoUrl = (videoFile) => {
-    if (!videoFile) return null;
-    if (videoFile.startsWith("http")) return videoFile;
-    return `${MEDIA_BASE_URL}${videoFile}`;
-  };
-
-
-  // const togglePlay = () => {
-  //   if (videoRef.current) {
-  //     if (isPlaying) {
-  //       videoRef.current.pause();
-  //     } else {
-  //       videoRef.current.play();
-  //     }
-  //     setIsPlaying(!isPlaying);
-  //   }
-  // };
-
   const togglePlay = () => {
-    if (!videoRef.current) return;
-    
-    const videoUrl = getVideoUrl(currentVideo?.video_file);
-    if (!videoUrl) {
-      setVideoError("Video source not available");
-      return;
-    }
-
-    try {
+    if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
       } else {
-        videoRef.current.play().catch((err) => {
-          console.error("Playback error:", err);
-          setVideoError("Failed to play video");
-        });
+        videoRef.current.play();
       }
       setIsPlaying(!isPlaying);
-      setVideoError(null);
-    } catch (err) {
-      console.error("Toggle play error:", err);
-      setVideoError("Error playing video");
     }
   };
 
@@ -89,16 +52,13 @@ function DashboardVideoDetails() {
     }
   };
 
-   
-
-   const handleProgressClick = (e) => {
-    if (videoRef.current && duration) {
+  const handleProgressClick = (e) => {
+    if (videoRef.current) {
       const rect = e.currentTarget.getBoundingClientRect();
       const pos = (e.clientX - rect.left) / rect.width;
       videoRef.current.currentTime = pos * duration;
     }
   };
-
 
   const handleVolumeChange = (e) => {
     const newVolume = parseFloat(e.target.value);
@@ -167,8 +127,7 @@ function DashboardVideoDetails() {
                 {currentVideo?.video_file ? (
                   <video
                     ref={videoRef}
-                    // src={currentVideo.video_file}
-                     src={getVideoUrl(currentVideo.video_file)}
+                    src={currentVideo.video_file}
                     className="w-full h-full object-cover"
                     onTimeUpdate={handleTimeUpdate}
                     onLoadedMetadata={handleLoadedMetadata}
@@ -311,9 +270,6 @@ function DashboardVideoDetails() {
           </div>
 
           {/* Right Side - Video List */}
-         
-
-         {/* Right Side - Video List */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg p-5 shadow-sm">
               <div className="flex items-start justify-between mb-2">
@@ -343,16 +299,11 @@ function DashboardVideoDetails() {
                     <div className="relative w-24 h-16 flex-shrink-0 rounded overflow-hidden">
                       <img
                         src={
-                          video.thumbnail
-                            ? getVideoUrl(video.thumbnail)
-                            : "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759812746/day-picture-id1163588010_xjbdnc.jpg"
+                          video.thumbnail ||
+                          "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759812746/day-picture-id1163588010_xjbdnc.jpg"
                         }
                         alt={video.title}
                         className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.target.src =
-                            "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759812746/day-picture-id1163588010_xjbdnc.jpg";
-                        }}
                       />
                       {video.duration && (
                         <span className="absolute bottom-1 right-1 bg-black/80 text-white text-xs px-1 rounded">

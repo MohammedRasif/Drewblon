@@ -9,7 +9,7 @@ import {
 
 function DashboardVideos() {
   const { id } = useParams(); 
-  const [activeCategory, setActiveCategory] = useState("All categories");
+  const [activeCategory, setActiveCategory] = useState("All topics");
   const [selectedTopicId, setSelectedTopicId] = useState();
   const [selectedCategoryId, setSelectedCategoryId] = useState();
 
@@ -26,7 +26,7 @@ function DashboardVideos() {
   } = useShowVideoTopicDataQuery(id);
 
   const categories = useMemo(() => {
-    const cats = ["All categories"];
+    const cats = ["All topics"];
     if (videoCategory?.results) {
       videoCategory.results.forEach((topic) => {
         if (topic.name && !cats.includes(topic.name)) {
@@ -41,7 +41,7 @@ function DashboardVideos() {
   const handleCategoryClick = (category) => {
     setActiveCategory(category);
 
-    if (category === "All categories") {
+    if (category === "All topics") {
       setSelectedTopicId(null);
       setSelectedCategoryId(null);
     } else {
@@ -57,14 +57,14 @@ function DashboardVideos() {
 
   // Get playlists to display
   const getPlaylists = () => {
-    if (activeCategory === "All categories") {
+    if (activeCategory === "All topics") {
       // Show all playlists from all topics
       if (!videoCategory?.results) return [];
       
       const allPlaylists = [];
       videoCategory.results.forEach((topic) => {
         // You might need to fetch each topic's playlists separately
-        // For now, returning empty array for "All categories"
+        // For now, returning empty array for "All topics"
       });
       return allPlaylists;
     } else {
@@ -265,7 +265,7 @@ function DashboardVideos() {
       {!topicLoading &&
         !categoryLoading &&
         playlists.length === 0 &&
-        activeCategory !== "All categories" && (
+        activeCategory !== "All topics" && (
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">
               No playlists available in this category
