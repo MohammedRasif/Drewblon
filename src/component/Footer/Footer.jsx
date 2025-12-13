@@ -10,7 +10,6 @@ function Footer() {
   const handleSubscribe = (e) => {
     e.preventDefault();
     console.log("Subscribing email:", email);
-    // Add subscription logic here
     setEmail("");
   };
 
@@ -23,7 +22,7 @@ function Footer() {
           <div>
             <div className="flex items-center gap-2 mb-6">
               <div>
-                <img src={image} className="h-10" alt="" />
+                <img src={image} className="h-24" alt="" />
               </div>
             </div>
 

@@ -25,7 +25,6 @@ function DashboardFeed() {
     return ["All categories", ...catNames];
   }, [categoryData]);
 
-  // Transform API posts to match our UI needs
   const posts = useMemo(() => {
     if (!postData || postData.length === 0) return [];
 
@@ -41,16 +40,16 @@ function DashboardFeed() {
           : post.content,
       fullContent: post.content,
       category: post.category_name,
-      categoryId: post.category, // for filtering
+      categoryId: post.category,
       comments: post.comment_count,
       likes: post.like_count,
-      hasImage: post.images && post.images.length > 0,
-      image: post.images && post.images.length > 0 ? post.images[0] : null,
+      hasImage: post.images?.length > 0 && !!post.images[0]?.image,
+      image: post.images?.[0]?.image || null, 
       isLiked: post.is_liked,
     }));
   }, [postData]);
+  console.log(postData.content);
 
-  // Filter posts based on search and category
   const filteredPosts = useMemo(() => {
     return posts.filter((post) => {
       const matchesSearch =
@@ -65,7 +64,6 @@ function DashboardFeed() {
     });
   }, [posts, searchTerm, selectedCategory]);
 
-  // Like, Save, Comment handlers
   const handleLike = (postId) => {
     setLikedPosts((prev) => {
       const newSet = new Set(prev);
@@ -114,9 +112,18 @@ function DashboardFeed() {
     });
   };
 
-  // Loading state
   if (catLoading || postLoading) {
-    return <div className="text-center py-20">Loading feed...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="relative">
+          <div className="w-16 h-16 border-4 border-gray-200 rounded-full animate-spin border-t-blue-600"></div>
+          {/* <div className="absolute inset-0 w-16 h-16 border-4 border-transparent rounded-full animate-ping border-t-blue-500 opacity-75"></div> */}
+        </div>
+        <p className="ml-6 text-lg text-gray-600 font-medium">
+          Loading feed...
+        </p>
+      </div>
+    );
   }
 
   return (
@@ -237,90 +244,12 @@ function DashboardFeed() {
                         <img
                           src={post.image}
                           alt="post"
-                          className="w-48 h-40 object-cover rounded-lg shadow-md"
+                          className="w-48 h-40 object-cover rounded-lg"
                         />
                       </div>
                     )}
                   </div>
                 </div>
-
-                {/* Actions */}
-                {/* <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
-                  <div className="flex items-center gap-8">
-                    <button
-                      onClick={() => handleComments(post.id)}
-                      className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition"
-                    >
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                        />
-                      </svg>
-                      <span className="text-sm">{post.comments}</span>
-                    </button>
-
-                    <button
-                      onClick={() => handleLike(post.id)}
-                      className={`flex items-center gap-2 transition ${
-                        likedPosts.has(post.id) || post.isLiked
-                          ? "text-red-500"
-                          : "text-gray-600 hover:text-red-500"
-                      }`}
-                    >
-                      <svg
-                        className={`w-5 h-5 ${
-                          likedPosts.has(post.id) || post.isLiked
-                            ? "fill-current"
-                            : ""
-                        }`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                        />
-                      </svg>
-                      <span className="text-sm">
-                        {post.likes + (likedPosts.has(post.id) ? 1 : 0)}
-                      </span>
-                    </button>
-                  </div>
-
-                  <button
-                    onClick={() => handleSave(post.id)}
-                    className={`p-2 rounded-lg transition ${
-                      savedPosts.has(post.id)
-                        ? "text-blue-600 bg-blue-50"
-                        : "text-gray-500 hover:text-blue-600"
-                    }`}
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill={savedPosts.has(post.id) ? "currentColor" : "none"}
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
-                      />
-                    </svg>
-                  </button>
-                </div> */}
 
                 {/* Comments Section */}
                 <div
@@ -331,12 +260,10 @@ function DashboardFeed() {
                   }`}
                 >
                   <div className="px-6 py-4 border-t border-gray-100 space-y-4">
-                    {/* Dummy comments */}
                     <div className="text-sm text-gray-500 italic">
                       No comments yet. Be the first!
                     </div>
 
-                    {/* Comment Input */}
                     <div className="flex gap-3 mt-4">
                       <div className="w-10 h-10 bg-gray-300 rounded-full flex-shrink-0"></div>
                       <div className="flex-1 flex gap-3">

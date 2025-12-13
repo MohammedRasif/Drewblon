@@ -12,7 +12,7 @@ function DashboardVideos() {
   const [activeCategory, setActiveCategory] = useState("All topics");
   const [selectedTopicId, setSelectedTopicId] = useState();
   const [selectedCategoryId, setSelectedCategoryId] = useState();
-
+  const baseUrl = "http://cowbird-central-crawdad.ngrok-free.app"
   const {
     data: videoCategory,
     isLoading: categoryLoading,
@@ -57,26 +57,23 @@ function DashboardVideos() {
 
   // Get playlists to display
   const getPlaylists = () => {
-    if (activeCategory === "All topics") {
-      // Show all playlists from all topics
-      if (!videoCategory?.results) return [];
-      
-      const allPlaylists = [];
-      videoCategory.results.forEach((topic) => {
-        // You might need to fetch each topic's playlists separately
-        // For now, returning empty array for "All topics"
-      });
-      return allPlaylists;
-    } else {
-      // Show playlists from selected topic
-      if (!videoTopic?.topics?.[0]?.playlists) return [];
-      return videoTopic.topics[0].playlists;
-    }
-  };
+  if (activeCategory === "All topics") {
+    if (!videoTopic?.topics) return [];
+
+    return videoTopic.topics.flatMap(
+      (topic) => topic.playlists || []
+    );
+  }
+  if (!videoTopic?.topics) return [];
+  const selectedTopic = videoTopic.topics.find(
+    (t) => t.name === activeCategory
+  );
+  return selectedTopic?.playlists || [];
+};
+
 
   const playlists = getPlaylists();
 
-  // Split playlists into new and popular (example logic)
   const newPlaylists = useMemo(() => {
     return playlists.slice(0, 3);
   }, [playlists]);
@@ -88,11 +85,14 @@ function DashboardVideos() {
   // Loading state
   if (categoryLoading) {
     return (
-      <div className="bg-gray-50 pr-5 pb-10 min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading videos...</p>
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="relative">
+          <div className="w-16 h-16 border-4 border-gray-200 rounded-full animate-spin border-t-blue-600"></div>
+          {/* <div className="absolute inset-0 w-16 h-16 border-4 border-transparent rounded-full animate-ping border-t-blue-500 opacity-75"></div> */}
         </div>
+        <p className="ml-6 text-lg text-gray-600 font-medium">
+          Loading ...
+        </p>
       </div>
     );
   }
@@ -189,7 +189,7 @@ function DashboardVideos() {
               >
                 <div className="relative aspect-video">
                   <img
-                    src={playlist.thumbnail || "/placeholder.svg"}
+                    src={`${baseUrl}${playlist.image}`}
                     alt={playlist.title}
                     className="w-full h-full object-cover"
                   />
@@ -234,7 +234,7 @@ function DashboardVideos() {
               >
                 <div className="relative aspect-video">
                   <img
-                    src={playlist.thumbnail || "/placeholder.svg"}
+                    src={`${baseUrl}${playlist.image}`}
                     alt={playlist.title}
                     className="w-full h-full object-cover"
                   />

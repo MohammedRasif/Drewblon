@@ -30,7 +30,11 @@ function DashboardProfileEdit() {
 
     switch (activeTab) {
       case "personal":
-        return <DashbaordProfile user={user} />;
+        return <DashbaordProfile 
+            user={user} 
+            updateProfile={updateProfileInpormation}
+            isUpdating={isUpdating}
+          />;
       case "interests":
         return (
           <DashboardInterest

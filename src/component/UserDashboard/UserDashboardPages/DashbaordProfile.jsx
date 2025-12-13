@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
+import { useUpdatePasswordMutation } from "../../../redux/features/baseApi";
 
 function DashbaordProfile({ user, updateProfile, isUpdating }) {
   const [formData, setFormData] = useState({
@@ -15,12 +16,14 @@ function DashbaordProfile({ user, updateProfile, isUpdating }) {
     confirm_password: "",
   });
 
-  const [profilePicture, setProfilePicture] = useState(null); 
-  const [previewUrl, setPreviewUrl] = useState(""); 
+  const [profilePicture, setProfilePicture] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState("");
   const [isDeletingPicture, setIsDeletingPicture] = useState(false);
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  // আলাদা password update mutation
+  const [updatePassword, { isLoading: isPasswordUpdating }] = useUpdatePasswordMutation();
 
   useEffect(() => {
     if (user) {
@@ -32,13 +35,11 @@ function DashbaordProfile({ user, updateProfile, isUpdating }) {
         email: user.email || "",
       });
 
-      // বিদ্যমান ছবির প্রিভিউ
       const existingPic = user.profile_picture;
       if (existingPic) {
         const fullUrl = existingPic.startsWith("/media")
-          ? `https://your-backend.com${existingPic}` 
+          ? `https://cowbird-central-crawdad.ngrok-free.app${existingPic}`
           : existingPic;
-
         setPreviewUrl(fullUrl);
       }
     }
@@ -54,7 +55,7 @@ function DashbaordProfile({ user, updateProfile, isUpdating }) {
   };
 
   const handleDeletePicture = () => {
-    setProfilePicture("DELETE"); 
+    setProfilePicture("DELETE");
     setPreviewUrl("");
     setIsDeletingPicture(true);
   };
@@ -70,41 +71,78 @@ function DashbaordProfile({ user, updateProfile, isUpdating }) {
   };
 
   const handleUpdate = async () => {
-    if (passwordData.new_password !== passwordData.confirm_password) {
+    const hasPassword =
+      passwordData.new_password.trim() && passwordData.confirm_password.trim();
+
+    if (hasPassword && passwordData.new_password !== passwordData.confirm_password) {
       alert("Passwords do not match!");
       return;
     }
 
-    const data = new FormData();
+    let profileUpdated = false;
+    let passwordUpdated = false;
+
+    const profileFormData = new FormData();
 
     const fullName = `${formData.first_name} ${formData.last_name}`.trim();
-    if (fullName) data.append("name", fullName);
+    if (fullName && fullName !== user?.name) {
+      profileFormData.append("name", fullName);
+    }
 
-    if (formData.passing_year)
-      data.append("passing_year", formData.passing_year);
-
-    if (passwordData.new_password) {
-      data.append("new_password", passwordData.new_password);
+    if (
+      formData.passing_year &&
+      formData.passing_year !== (user?.passing_year?.toString() || "")
+    ) {
+      profileFormData.append("passing_year", formData.passing_year);
     }
 
     if (profilePicture === "DELETE") {
-      data.append("profile_picture", ""); 
+      profileFormData.append("profile_picture", "");
     } else if (profilePicture && profilePicture instanceof File) {
-      data.append("profile_picture", profilePicture);
+      profileFormData.append("profile_picture", profilePicture);
     }
 
-    try {
-      await updateProfile(data).unwrap();
-      alert("Profile updated successfully!");
+    if ([...profileFormData.entries()].length > 0) {
+      try {
+        await updateProfile(profileFormData).unwrap();
+        profileUpdated = true;
+        setProfilePicture(null);
+      } catch (err) {
+        console.error("Profile update failed:", err);
+        alert(
+          "Failed to update profile info: " +
+            (err?.data?.detail || err?.data?.message || "Try again")
+        );
+        return;
+      }
+    }
 
-      setPasswordData({ new_password: "", confirm_password: "" });
-      setProfilePicture(null);
-      if (profilePicture === "DELETE") setIsDeletingPicture(true);
-    } catch (err) {
-      console.error("Update failed:", err);
-      alert("Failed to update profile: " + (err?.data?.detail || "Try again"));
+    if (hasPassword) {
+      try {
+        await updatePassword({
+          new_password: passwordData.new_password,
+          confirm_password: passwordData.confirm_password,
+        }).unwrap();
+
+        passwordUpdated = true;
+        setPasswordData({ new_password: "", confirm_password: "" }); // ক্লিয়ার করো
+        alert("Password changed successfully!");
+      } catch (err) {
+        console.error("Password update failed:", err);
+        alert(
+          "Failed to change password: " +
+            (err?.data?.detail || err?.data?.message || "Try again")
+        );
+        return;
+      }
+    }
+
+    if (profileUpdated && !hasPassword) {
+      alert("Profile updated successfully!");
     }
   };
+
+  const isAnyUpdating = isUpdating || isPasswordUpdating;
 
   return (
     <div className="rounded-lg p-4 max-w-3xl">
@@ -115,10 +153,10 @@ function DashbaordProfile({ user, updateProfile, isUpdating }) {
         </h1>
         <button
           onClick={handleUpdate}
-          disabled={isUpdating}
+          disabled={isAnyUpdating}
           className="bg-[#3565FC] hover:bg-blue-600 disabled:opacity-70 text-white px-8 py-3 rounded-full font-medium text-[16px] cursor-pointer transition flex items-center gap-2"
         >
-          {isUpdating ? "Updating..." : "Update"}
+          {isAnyUpdating ? "Updating..." : "Update"}
         </button>
       </div>
 
@@ -143,7 +181,6 @@ function DashbaordProfile({ user, updateProfile, isUpdating }) {
         </div>
 
         <div className="flex flex-col gap-3">
-          {/* Hidden File Input */}
           <input
             type="file"
             id="profile-picture"
@@ -232,16 +269,13 @@ function DashbaordProfile({ user, updateProfile, isUpdating }) {
               {formData.email}
             </h1>
             <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-              <IoMdCheckmarkCircleOutline
-                size={24}
-                className="text-green-600"
-              />
+              <IoMdCheckmarkCircleOutline size={24} className="text-green-600" />
             </div>
           </div>
         </div>
 
         {/* Change Password */}
-        <div className="pt-6 ">
+        <div className="pt-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
             Change password (Optional)
           </h2>

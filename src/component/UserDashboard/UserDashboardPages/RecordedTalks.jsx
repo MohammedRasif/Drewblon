@@ -9,19 +9,17 @@ function RecordedTalks({ talks, selectedCategory, isLoading }) {
       ? talks
       : talks.filter((talk) => talk.category_name === selectedCategory);
 
-  // Format duration (you can calculate from video if needed later)
   const formatDuration = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  // Base URL for media (adjust if needed)
-  const MEDIA_URL = "http://10.10.13.60:8002/" || "http://yourdomain.com";
+  const MEDIA_URL = "http://cowbird-central-crawdad.ngrok-free.app" || "http://yourdomain.com";
 
   if (isLoading) {
     return (
-      <div className="text-center py-20 text-gray-500">Loading talks...</div>
+      <div className="text-center py-20 text-gray-500"></div>
     );
   }
 
@@ -43,9 +41,9 @@ function RecordedTalks({ talks, selectedCategory, isLoading }) {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {filteredTalks.map((talk) => {
         const videoUrl = `${MEDIA_URL}${talk.talk_file}`;
-        const thumbnailUrl = `${MEDIA_URL}${talk.thumbnail}`
-          ? talk.thumbnail
-          : "/placeholder-video.jpg";
+        const thumbnailUrl = talk.thumbnail
+  ? `${MEDIA_URL}${talk.thumbnail}`
+  : "/placeholder-video.jpg";
 
         const isPlaying = playingId === talk.id;
 
@@ -72,7 +70,7 @@ function RecordedTalks({ talks, selectedCategory, isLoading }) {
                   />
                   <div
                     onClick={() => setPlayingId(talk.id)}
-                    className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 cursor-pointer hover:bg-opacity-50 transition"
+                    className="absolute inset-0 flex items-center justify-center bg-opacity-40 cursor-pointer hover:bg-opacity-50 transition"
                   >
                     <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transform hover:scale-110 transition">
                       <svg

@@ -15,16 +15,14 @@ function Upcomming({
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [loading, setLoading] = useState({});
 
-  // Get all livestreams from the main API
   const allLivestreams = showUpcommingLiveSctrimAllData?.results || [];
 
-  // Get filtered data for selected date
   const upcomingTalksForDate = showFilterData?.upcoming_talks_for_date || [];
   const todayScheduledLivestreams =
     showFilterData?.today_scheduled_livestreams || [];
   const upcomingRegisteredTalks =
     showFilterData?.upcoming_registered_talks || [];
-
+  const baseUrl = "http://cowbird-central-crawdad.ngrok-free.app"
   // Get dates that have events from all livestreams
   const getDatesWithEvents = () => {
     const dates = new Set();
@@ -370,7 +368,7 @@ function Upcomming({
     return (
       <div className="flex gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
         <img
-          src={stream.thumbnail || "/placeholder.svg"}
+          src={`${baseUrl}${stream.thumbnail}`}
           alt={stream.title}
           className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
         />

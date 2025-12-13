@@ -12,13 +12,11 @@ const Dashboard = () => {
   const {data: shwoProfileLeaderBoard} = useShowProfileLeaderBoradQuery()
   console.log(shwoProfileLeaderBoard)
 
-  // Extract data from API responses
   const stats = showProfileOverview?.stats || {};
   const userInfo = showProfileInfromation?.user || {};
   const leaderboardRankings = shwoProfileLeaderBoard?.rankings || [];
   const currentUserRank = shwoProfileLeaderBoard?.current_user_rank || 0;
 
-  // Overview stats with API data
   const overviewStats = [
     {
       label: "Learning time",
@@ -50,13 +48,12 @@ const Dashboard = () => {
     },
   ];
 
-  // Career interests from API
+  const baseUrl = "http://cowbird-central-crawdad.ngrok-free.app"
   const careerInterests = userInfo.career_interest || [];
   
-  // Extracurricular activities from API
   const extracurricularActivities = userInfo.extracurricular_activities || [];
+  console.log({extracurricularActivities})
 
-  // Get color for tags (cycling through predefined colors)
   const getTagColor = (index) => {
     const colors = [
       "bg-green-100 text-green-700",
@@ -111,7 +108,7 @@ const Dashboard = () => {
           <div className="flex  justify-between mb-6">
             <div className="flex items-center space-x-4 mb-6">
               <img
-                src={userInfo.profile_picture || "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529169/samples/landscapes/girl-urban-view.jpg"}
+                src={`${baseUrl}${userInfo.profile_picture}`}
                 alt="Profile"
                 className="w-20 h-20 rounded-full object-cover"
               />
@@ -177,7 +174,7 @@ const Dashboard = () => {
                       key={index}
                       className={`px-3 py-1 rounded-full text-md font-medium ${getTagColor(index)}`}
                     >
-                      {activity}
+                      {activity.name}
                     </span>
                   ))}
                 </div>

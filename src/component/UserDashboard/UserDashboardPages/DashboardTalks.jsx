@@ -99,7 +99,15 @@ function DashboardTalks() {
           <>
             {/* Loading Categories */}
             {catLoading ? (
-              <div className="text-center py-10">Loading categories...</div>
+              <div className="flex items-center justify-center mt-48 bg-gray-50">
+                <div className="relative">
+                  <div className="w-16 h-16 border-4 border-gray-200 rounded-full animate-spin border-t-blue-600"></div>
+                  {/* <div className="absolute inset-0 w-16 h-16 border-4 border-transparent rounded-full animate-ping border-t-blue-500 opacity-75"></div> */}
+                </div>
+                <p className="ml-6 text-lg text-gray-600 font-medium">
+                  Loading...
+                </p>
+              </div>
             ) : (
               <div className="flex flex-wrap gap-3 mb-8">
                 {categories.map((category) => (

@@ -1,17 +1,15 @@
 import { useState } from "react";
 
 export default function DashboardInterests({ user, updateProfile, isUpdating }) {
-  // SAFE fallback
   const safeUser = user || {};
 
-  const [careerInterests, setCareerInterests] = useState(
-    safeUser.career_interest?.map((item) => item.name) ?? []
-  );
+ const [careerInterests, setCareerInterests] = useState(
+  safeUser.career_interest?.map((item) => item.name) ?? []
+);
 
-  const [extracurricular, setExtracurricular] = useState(
-    safeUser.extracurricular_activities ?? []
-  );
-
+const [extracurricular, setExtracurricular] = useState(
+  safeUser.extracurricular_activities?.map((item) => item.name) ?? []
+);
   const [careerInput, setCareerInput] = useState("");
   const [extraInput, setExtraInput] = useState("");
 

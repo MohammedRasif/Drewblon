@@ -7,7 +7,7 @@ import { useShowVideoCategoryQuery } from "../../../redux/features/baseApi";
 const DashboardVideoCategory = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const { data: videoCategory, isLoading } = useShowVideoCategoryQuery();
-
+  const baseUrl = "http://cowbird-central-crawdad.ngrok-free.app";
   if (isLoading) {
     return (
       <div className="w-full bg-background p-8">
@@ -76,12 +76,11 @@ const DashboardVideoCategory = () => {
                 }
               `}
             >
-              {/* Background Image with Overlay */}
               <div
                 className="p-8 min-h-[240px] flex flex-col justify-end relative"
                 style={{
-                  backgroundImage: category.image
-                    ? `url(${category.image})`
+                  backgroundImage: category.thumbnail
+                    ? `url(${baseUrl}${category.thumbnail})`
                     : `url('https://images.unsplash.com/photo-1485579149c0-123123123?w=500&h=300&fit=crop')`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",

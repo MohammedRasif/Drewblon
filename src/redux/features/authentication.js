@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const authentication = createApi({
   reducerPath: "authentication",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://10.10.13.60:8002/api",
+    baseUrl: "https://cowbird-central-crawdad.ngrok-free.app/api",
     prepareHeaders: (headers) => {
       headers.set("ngrok-skip-browser-warning", "true");
       return headers;

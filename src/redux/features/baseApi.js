@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://10.10.13.60:8002/api",
+    baseUrl: "https://cowbird-central-crawdad.ngrok-free.app/api",
     prepareHeaders: (headers, { endpoint }) => {
       headers.set("ngrok-skip-browser-warning", "true");
 
@@ -16,7 +16,7 @@ export const baseApi = createApi({
     },
   }),
 
-  tagTypes: ["profileInfo", "register", "simulation"],
+  tagTypes: ["profileInfo", "register", "simulation","updateData"],
   endpoints: (builder) => ({
     // showProfileInformation: builder.query({
     //   query: () => "/accounts/profile/",
@@ -27,17 +27,22 @@ export const baseApi = createApi({
 
     showProfileOverView: builder.query({
       query: () => "/accounts/profile-stats/",
+      providesTags:["updateData"]
     }),
     // showProfileInformation
     showProfileInformation: builder.query({
       query: () => "/accounts/profile/",
+      providesTags:["updateData"]
     }),
 
     // showPorfile leaderborad
 
     showProfileLeaderBorad: builder.query({
       query: () => "/rankings/",
+      providesTags:["updateData"]
     }),
+
+    
 
     // show feed data
     showFeedData: builder.query({
@@ -88,11 +93,21 @@ export const baseApi = createApi({
 
     // update profile
     updateProfileInpormation: builder.mutation({
-      query: (body) => ({
+      query: (data) => ({
         url: `/accounts/profile/`,
         method: "PUT",
-        body,
+        body:data
       }),
+    }),
+
+    // update password
+
+    updatePassword:builder.mutation({
+      query:(data) => ({
+        url: `/accounts/password-change/`,
+        method: "POST",
+        body:data
+      })
     }),
 
     showSimulation: builder.query({
@@ -185,6 +200,7 @@ export const {
   useBookingUpCommingLiveStrimMutation,
   useCencelBookingUpCommingLiveStrimMutation,
   useUpdateProfileInpormationMutation,
+  useUpdatePasswordMutation,
 
   useShowSimulationQuery,
   useShowSimulationCategoryQuery,
