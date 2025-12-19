@@ -7,7 +7,7 @@ import {
   useShowSuggestedVideQuery,
 } from "../../../redux/features/baseApi";
 
-const MEDIA_BASE_URL = "http://10.10.13.60:8002";
+const MEDIA_BASE_URL = "https://cowbird-central-crawdad.ngrok-free.app";
 
 function DashboardVideoDetails() {
   const { id } = useParams(); 
