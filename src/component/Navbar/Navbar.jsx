@@ -11,7 +11,7 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const token = localStorage.getItem("access_token");
-  const BASE_URL = "https://cowbird-central-crawdad.ngrok-free.app";
+  const BASE_URL = "https://noncircuitous-lauryn-pseudosocialistic.ngrok-free.dev";
   const {
     data: profileInfo,
     isLoading,
