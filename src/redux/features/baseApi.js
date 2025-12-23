@@ -23,7 +23,6 @@ export const baseApi = createApi({
       query: () => "/accounts/profile-stats/",
       providesTags:["updateData"]
     }),
-    // showProfileInformation
     showProfileInformation: builder.query({
       query: () => "/accounts/profile/",
       providesTags:["updateData"]
