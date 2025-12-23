@@ -11,19 +11,13 @@ export const baseApi = createApi({
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }
-
       return headers;
     },
   }),
 
   tagTypes: ["profileInfo", "register", "simulation","updateData"],
   endpoints: (builder) => ({
-    // showProfileInformation: builder.query({
-    //   query: () => "/accounts/profile/",
-    //   providesTags: ["profileInfo"],
-    // }),
-
-    // show dashboard data
+   
 
     showProfileOverView: builder.query({
       query: () => "/accounts/profile-stats/",
@@ -35,7 +29,6 @@ export const baseApi = createApi({
       providesTags:["updateData"]
     }),
 
-    // showPorfile leaderborad
 
     showProfileLeaderBorad: builder.query({
       query: () => "/rankings/",

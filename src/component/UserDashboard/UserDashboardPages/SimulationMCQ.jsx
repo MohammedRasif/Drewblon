@@ -11,10 +11,10 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showResult, setShowResult] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(false);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [completedQuestions, setCompletedQuestions] = useState(0);
   const [answers, setAnswers] = useState([]);
+  const [submissionResult, setSubmissionResult] = useState(null);
 
   const { data: questionsData, isLoading } = useShowSimulationCategoryAllQuestionQuery(
     {
@@ -30,23 +30,25 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
   const [submitMCQ, { isLoading: isSubmitting }] = useSimulationQuestionSubmitMutation();
 
   const questions = questionsData?.questions || [];
+  
+  // Check if this is a review mode (has correct_option) or quiz mode (no correct_option)
+  const isReviewMode = questions.length > 0 && questions[0]?.correct_option !== undefined;
 
-  // Reset when modal opens
   useEffect(() => {
     if (isOpen) {
       setCurrentQuestion(0);
       setSelectedAnswer(null);
       setShowResult(false);
-      setIsCorrect(false);
       setQuizCompleted(false);
       setCompletedQuestions(0);
       setAnswers([]);
+      setSubmissionResult(null);
     }
   }, [isOpen]);
 
-  // Auto-advance to next question after 3 seconds
+  // Auto-advance in quiz mode only
   useEffect(() => {
-    if (showResult && !quizCompleted) {
+    if (showResult && !quizCompleted && !isReviewMode) {
       const timer = setTimeout(() => {
         setCompletedQuestions((prev) => prev + 1);
 
@@ -54,19 +56,17 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
           setCurrentQuestion(currentQuestion + 1);
           setSelectedAnswer(null);
           setShowResult(false);
-          setIsCorrect(false);
         } else {
-          // Submit all answers when quiz is complete
           handleFinalSubmit();
         }
       }, 4000);
 
       return () => clearTimeout(timer);
     }
-  }, [showResult, currentQuestion, quizCompleted, questions.length]);
+  }, [showResult, currentQuestion, quizCompleted, questions.length, isReviewMode]);
 
   const handleAnswerSelect = (option) => {
-    if (!showResult) {
+    if (!showResult && !isReviewMode) {
       setSelectedAnswer(option);
     }
   };
@@ -75,7 +75,6 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
     if (selectedAnswer !== null) {
       const currentQ = questions[currentQuestion];
       
-      // Store the answer
       setAnswers((prev) => [
         ...prev,
         {
@@ -84,38 +83,42 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
         },
       ]);
 
-      // For demo purposes, we'll show if it's correct
-      // In real scenario, you might not know until final submit
-      setIsCorrect(true); // You can add logic to check if answer is correct
       setShowResult(true);
     }
   };
 
   const handleFinalSubmit = async () => {
     try {
+      const allAnswers = [...answers, {
+        question_id: questions[currentQuestion].id,
+        selected_option: selectedAnswer,
+      }];
+
       const response = await submitMCQ({
         taskId,
         categoryId,
         simLevel: selectedLevel,
-        answers: [...answers, {
-          question_id: questions[currentQuestion].id,
-          selected_option: selectedAnswer,
-        }],
+        answers: allAnswers,
       }).unwrap();
 
-      // Show completion with results
+      setSubmissionResult(response);
       setQuizCompleted(true);
-      
-      // You can show a success message with response data
-      console.log("Quiz completed:", response);
     } catch (error) {
       console.error("Failed to submit quiz:", error);
     }
   };
 
+  const handleNext = () => {
+    if (currentQuestion < questions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+    } else {
+      // Last question in review mode, just close
+      onClose();
+    }
+  };
+
   const handleComplete = () => {
     onClose();
-    // Optionally refetch the questions to update the UI
     window.location.reload();
   };
 
@@ -151,6 +154,56 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
     );
   }
 
+  // Quiz Completion Screen (only for quiz mode)
+  if (quizCompleted && submissionResult && !isReviewMode) {
+    return (
+      <div className="fixed inset-0 bg-black/5 backdrop-blur-[2px] bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="flex items-center justify-between p-6 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900">
+              Quiz Completed!
+            </h2>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <IoClose className="w-6 h-6" />
+            </button>
+          </div>
+
+          <div className="p-6 space-y-6">
+            <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-6 text-center">
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                Your Score
+              </h3>
+              <p className="text-4xl font-bold text-blue-600 mb-2">
+                {submissionResult.correct_answers} / {submissionResult.total_answers}
+              </p>
+              <p className="text-gray-600">
+                {Math.round((submissionResult.correct_answers / submissionResult.total_answers) * 100)}% Correct
+              </p>
+            </div>
+
+            <div className="text-center">
+              <p className="text-gray-700">
+                {submissionResult.message}
+              </p>
+            </div>
+          </div>
+
+          <div className="p-6 border-t border-gray-200 flex justify-end">
+            <button
+              onClick={handleComplete}
+              className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const currentQ = questions[currentQuestion];
   const options = [
     { label: "A", text: currentQ.option_a },
@@ -159,13 +212,16 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
     { label: "D", text: currentQ.option_d },
   ];
 
+  // Check if current answer is correct (only in quiz mode after submission)
+  const isCurrentAnswerCorrect = !isReviewMode && showResult && selectedAnswer === currentQ.correct_option;
+
   return (
     <div className="fixed inset-0 bg-black/5 backdrop-blur-[2px] bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">
-            Question {currentQuestion + 1} of {questions.length}
+            {isReviewMode ? "Review " : ""}Question {currentQuestion + 1} of {questions.length}
           </h2>
           <button
             onClick={onClose}
@@ -185,7 +241,9 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
               >
                 <div
                   className={`h-full transition-all duration-700 ease-out ${
-                    index < completedQuestions
+                    isReviewMode
+                      ? index <= currentQuestion ? "bg-blue-600" : "bg-gray-200"
+                      : index < completedQuestions
                       ? "bg-gray-900"
                       : index === currentQuestion && showResult
                       ? "bg-gray-900"
@@ -193,7 +251,9 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
                   }`}
                   style={{
                     width:
-                      index < completedQuestions
+                      isReviewMode
+                        ? index <= currentQuestion ? "100%" : "0%"
+                        : index < completedQuestions
                         ? "100%"
                         : index === currentQuestion && showResult
                         ? "100%"
@@ -217,37 +277,48 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
             <div className="space-y-3">
               {options.map((option) => {
                 const isSelected = selectedAnswer === option.label;
-                const showAsCorrect = showResult && isCorrect && isSelected;
-                const showAsWrong = showResult && !isCorrect && isSelected;
+                const isCorrectOption = option.label === currentQ.correct_option;
+                
+                // In review mode, always show correct answer in green
+                const showAsCorrect = isReviewMode ? isCorrectOption : (showResult && isCorrectOption);
+                
+                // In quiz mode, show wrong answer in red
+                const showAsWrong = !isReviewMode && showResult && isSelected && !isCurrentAnswerCorrect;
 
                 return (
                   <label
                     key={option.label}
-                    className={`flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                      showAsWrong
+                    className={`flex items-start gap-3 p-4 rounded-lg border-2 transition-all ${
+                      isReviewMode 
+                        ? showAsCorrect
+                          ? "border-green-500 bg-green-50"
+                          : "border-gray-200 bg-gray-50"
+                        : showAsWrong
                         ? "border-red-500 bg-red-50"
                         : showAsCorrect
                         ? "border-green-500 bg-green-50"
                         : isSelected
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-gray-200 hover:border-gray-300"
+                        ? "border-blue-500 bg-blue-50 cursor-pointer"
+                        : "border-gray-200 hover:border-gray-300 cursor-pointer"
                     }`}
                     onClick={() => handleAnswerSelect(option.label)}
                   >
-                    <input
-                      type="radio"
-                      name="answer"
-                      checked={isSelected}
-                      onChange={() => handleAnswerSelect(option.label)}
-                      className="mt-1 w-4 h-4 text-blue-600"
-                      disabled={showResult}
-                    />
+                    {!isReviewMode && (
+                      <input
+                        type="radio"
+                        name="answer"
+                        checked={isSelected}
+                        onChange={() => handleAnswerSelect(option.label)}
+                        className="mt-1 w-4 h-4 text-blue-600"
+                        disabled={showResult}
+                      />
+                    )}
                     <span
                       className={`flex-1 ${
                         showAsWrong
                           ? "text-red-600"
                           : showAsCorrect
-                          ? "text-green-700"
+                          ? "text-green-700 font-medium"
                           : "text-gray-700"
                       }`}
                     >
@@ -262,14 +333,19 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
             </div>
           </div>
 
-          {/* Success Message */}
-          {showResult && isCorrect && (
+          {/* Explanation - Show in review mode or after submission in quiz mode */}
+          {((isReviewMode || showResult) && currentQ.explanation) && (
             <div className="bg-green-50 border-2 border-green-200 rounded-lg p-4">
-              <div className="flex items-center gap-2">
-                <IoCheckmarkCircle className="w-6 h-6 text-green-600" />
-                <p className="font-semibold text-green-700">
-                  Correct! Well done.
-                </p>
+              <div className="flex items-start gap-2">
+                <IoCheckmarkCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="font-semibold text-green-700 mb-1">
+                    Correct Answer: {currentQ.correct_option}
+                  </p>
+                  <p className="text-gray-700 text-sm">
+                    {currentQ.explanation}
+                  </p>
+                </div>
               </div>
             </div>
           )}
@@ -277,32 +353,36 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
 
         {/* Footer */}
         <div className="p-6 border-t border-gray-200 flex justify-end">
-          {quizCompleted ? (
+          {isReviewMode ? (
+            // Review mode - Only Next button
             <button
-              onClick={handleComplete}
+              onClick={handleNext}
               className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
             >
-              Complete Quiz
-            </button>
-          ) : showResult ? (
-            <button
-              disabled
-              className="px-6 py-2.5 bg-gray-300 text-gray-500 rounded-lg font-medium cursor-not-allowed"
-            >
-              Next (Auto-advancing...)
+              {currentQuestion < questions.length - 1 ? "Next" : "Close"}
             </button>
           ) : (
-            <button
-              onClick={handleSubmit}
-              disabled={selectedAnswer === null || isSubmitting}
-              className={`px-6 py-2.5 rounded-lg font-medium transition-colors ${
-                selectedAnswer !== null && !isSubmitting
-                  ? "bg-blue-600 text-white hover:bg-blue-700"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
-            >
-              {isSubmitting ? "Submitting..." : "Submit"}
-            </button>
+            // Quiz mode - Submit or Auto-advancing
+            showResult ? (
+              <button
+                disabled
+                className="px-6 py-2.5 bg-gray-300 text-gray-500 rounded-lg font-medium cursor-not-allowed"
+              >
+                Next (Auto-advancing...)
+              </button>
+            ) : (
+              <button
+                onClick={handleSubmit}
+                disabled={selectedAnswer === null || isSubmitting}
+                className={`px-6 py-2.5 rounded-lg font-medium transition-colors ${
+                  selectedAnswer !== null && !isSubmitting
+                    ? "bg-blue-600 text-white hover:bg-blue-700"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+              >
+                {isSubmitting ? "Submitting..." : "Submit"}
+              </button>
+            )
           )}
         </div>
       </div>
