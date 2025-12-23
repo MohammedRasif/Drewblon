@@ -48,7 +48,7 @@ const Dashboard = () => {
     },
   ];
 
-  const baseUrl = "http://cowbird-central-crawdad.ngrok-free.app"
+  const baseUrl = "https://noncircuitous-lauryn-pseudosocialistic.ngrok-free.dev"
   const careerInterests = userInfo.career_interest || [];
   
   const extracurricularActivities = userInfo.extracurricular_activities || [];

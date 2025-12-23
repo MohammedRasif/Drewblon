@@ -7,7 +7,7 @@ import { useShowVideoCategoryQuery } from "../../../redux/features/baseApi";
 const DashboardVideoCategory = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const { data: videoCategory, isLoading } = useShowVideoCategoryQuery();
-  const baseUrl = "http://cowbird-central-crawdad.ngrok-free.app";
+  const baseUrl = "https://noncircuitous-lauryn-pseudosocialistic.ngrok-free.dev";
   if (isLoading) {
     return (
       <div className="w-full bg-background p-8">

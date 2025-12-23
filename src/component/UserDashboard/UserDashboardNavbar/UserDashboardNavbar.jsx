@@ -15,7 +15,7 @@ const UserDashboardNavbar = () => {
     refetch,
   } = useShowProfileInformationQuery();
   console.log(profileInfo);
-  const BASE_URL = "https://cowbird-central-crawdad.ngrok-free.app";
+  const BASE_URL = "https://noncircuitous-lauryn-pseudosocialistic.ngrok-free.dev";
 
   useEffect(() => {
     const handleClickOutside = (event) => {

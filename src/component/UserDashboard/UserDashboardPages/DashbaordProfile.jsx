@@ -38,7 +38,7 @@ function DashbaordProfile({ user, updateProfile, isUpdating }) {
       const existingPic = user.profile_picture;
       if (existingPic) {
         const fullUrl = existingPic.startsWith("/media")
-          ? `https://cowbird-central-crawdad.ngrok-free.app${existingPic}`
+          ? `https://noncircuitous-lauryn-pseudosocialistic.ngrok-free.dev${existingPic}`
           : existingPic;
         setPreviewUrl(fullUrl);
       }

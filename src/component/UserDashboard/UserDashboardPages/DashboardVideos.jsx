@@ -12,7 +12,7 @@ function DashboardVideos() {
   const [activeCategory, setActiveCategory] = useState("All topics");
   const [selectedTopicId, setSelectedTopicId] = useState();
   const [selectedCategoryId, setSelectedCategoryId] = useState();
-  const baseUrl = "http://cowbird-central-crawdad.ngrok-free.app"
+  const baseUrl = "https://noncircuitous-lauryn-pseudosocialistic.ngrok-free.dev"
   const {
     data: videoCategory,
     isLoading: categoryLoading,

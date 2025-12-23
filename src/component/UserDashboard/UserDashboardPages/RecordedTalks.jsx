@@ -15,7 +15,7 @@ function RecordedTalks({ talks, selectedCategory, isLoading }) {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const MEDIA_URL = "http://cowbird-central-crawdad.ngrok-free.app" || "http://yourdomain.com";
+  const MEDIA_URL = "https://noncircuitous-lauryn-pseudosocialistic.ngrok-free.dev" || "http://yourdomain.com";
 
   if (isLoading) {
     return (

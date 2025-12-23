@@ -269,9 +269,7 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
         <div className="p-6 space-y-6">
           {/* Question */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-4">
-              {currentQ.text}
-            </h3>
+            
 
             {/* Options */}
             <div className="space-y-3">
