@@ -1,16 +1,12 @@
-import React from 'react';
-import image from "../../image/Frame 1707483197.png"
+import React from "react";
+import image from "../../image/Frame 1707483197.png";
 function Discover() {
   return (
-    
-    <div className="   relative overflow-hidden">
-      <img src={image} className='w-full  absolute' alt="" />
-
-
+    <div id="contact" className="   relative overflow-hidden">
+      <img src={image} className="w-full  absolute" alt="" />
 
       {/* Main Content Grid */}
       <div className="container py-16 md:py-24 lg:py-28  mx-auto flex flex-col lg:flex-row items-center justify-between relative z-10">
-        
         {/* Left Side: Text Content */}
         <div className="lg:w-1/2 text-center lg:text-left mb-12 lg:mb-10">
           <h1 className="lg:text-[48px] font-semibold text-gray-800 leading-tight mb-4 max-w-lg mx-auto lg:mx-0">
@@ -41,7 +37,7 @@ function Discover() {
                 className="w-full bg-gray-100 p-3 rounded-lg border-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-            
+
             {/* Row 2: School/Organization Name */}
             <div>
               <input

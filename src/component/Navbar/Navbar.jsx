@@ -8,6 +8,7 @@ import { useShowProfileInformationQuery } from "../../redux/features/baseApi";
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [activeLink, setActiveLink] = useState(null);
   const navigate = useNavigate();
 
   const token = localStorage.getItem("access_token");
@@ -28,6 +29,26 @@ const Navbar = () => {
     setIsProfileOpen(false);
     navigate("/login");
   };
+
+  const scrollToSection = (id) => {
+    const section = document.getElementById(id);
+    if (section) {
+      const offset = 50;
+      const sectionPosition =
+        section.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = sectionPosition - offset;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  };
+   const handleNavClick = (id) => {
+    setActiveLink(id);
+    scrollToSection(id);
+    setIsMenuOpen(false);
+  };
+
 
   // Remove automatic refetch on mount (RTK does first fetch automatically)
   // Only refetch when menu opens IF token exists
@@ -59,7 +80,8 @@ const Navbar = () => {
       </div>
 
       {/* Desktop Navigation */}
-      <div className="hidden md:flex items-center space-x-8">
+     <div className="flex items-center space-x-10">
+       <div className="hidden md:flex items-center space-x-8">
         <NavLink
           to="/about"
           className={({ isActive }) =>
@@ -68,9 +90,22 @@ const Navbar = () => {
             }`
           }
         >
-          About
+          Our mission
         </NavLink>
       </div>
+      <div className="hidden md:flex items-center space-x-8">
+        <NavLink
+           onClick={() => scrollToSection("contact")}
+          className={({ isActive }) =>
+            `text-[18px] font-semibold ${
+              isActive ? "text-gray-900" : "text-gray-600"
+            }`
+          }
+        >
+          Contact
+        </NavLink>
+      </div>
+     </div>
 
       {/* Right Side */}
       <div className="flex items-center space-x-4">
