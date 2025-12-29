@@ -147,7 +147,7 @@ function Login() {
             disabled={isLoading}
             className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors mb-4 cursor-pointer"
           >
-            {isLoading ? "Singing in.." : "Sing in"}
+            {isLoading ? "Sign in...." : "Sign in"}
           </button>
 
           {/* OR Divider */}
