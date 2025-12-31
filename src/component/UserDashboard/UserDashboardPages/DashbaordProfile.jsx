@@ -215,25 +215,31 @@ function DashbaordProfile({ user, updateProfile, isUpdating }) {
             <label className="block text-[14px] font-medium text-gray-700 mb-2">
               First name
             </label>
-            <input
+            {/* <input
               type="text"
               name="first_name"
               value={formData.first_name}
               onChange={handleInputChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            /> */}
+            <h1 className="text-[16px] text-[#525252] bg-gray-50 px-3 py-2 rounded-lg">
+            {formData.first_name || "Not set"}
+          </h1>
           </div>
           <div>
             <label className="block text-[14px] font-medium text-gray-700 mb-2">
               Last name
             </label>
-            <input
+            {/* <input
               type="text"
               name="last_name"
               value={formData.last_name}
               onChange={handleInputChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            /> */}
+            <h1 className="text-[16px] text-[#525252] bg-gray-50 px-3 py-2 rounded-lg">
+            {formData.last_name || "Not set"}
+          </h1>
           </div>
         </div>
 
@@ -241,14 +247,17 @@ function DashbaordProfile({ user, updateProfile, isUpdating }) {
           <label className="block text-[14px] font-medium text-gray-700 mb-2">
             Graduation year
           </label>
-          <input
+          {/* <input
             type="number"
             name="passing_year"
             value={formData.passing_year}
             onChange={handleInputChange}
             placeholder="e.g. 2026"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          /> */}
+          <h1 className="text-[16px] text-[#525252] bg-gray-50 px-3 py-2 rounded-lg">
+            {formData.passing_year || "Not set"}
+          </h1>
         </div>
 
         <div>
