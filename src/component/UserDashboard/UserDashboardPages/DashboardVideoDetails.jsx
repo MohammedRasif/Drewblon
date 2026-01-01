@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   useShowAllVideoDetailsQuery,
@@ -8,6 +8,41 @@ import {
 } from "../../../redux/features/baseApi";
 
 const MEDIA_BASE_URL = "https://noncircuitous-lauryn-pseudosocialistic.ngrok-free.dev";
+
+// Component to get actual video duration from file
+function VideoDurationBadge({ videoUrl, videoFile }) {
+  const [actualDuration, setActualDuration] = useState(null);
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (!videoUrl) return;
+
+    const video = document.createElement('video');
+    video.onloadedmetadata = () => {
+      if (!isNaN(video.duration)) {
+        setActualDuration(video.duration);
+      }
+    };
+    video.onerror = () => {
+      console.warn("Failed to load video metadata for:", videoFile);
+    };
+    video.src = videoUrl;
+  }, [videoUrl, videoFile]);
+
+  if (actualDuration === null) return null;
+
+  const formatDuration = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  return (
+    <span className="absolute bottom-1 right-1 bg-black/80 text-white text-xs px-1 rounded">
+      {formatDuration(actualDuration)}
+    </span>
+  );
+}
 
 function DashboardVideoDetails() {
   const { id } = useParams(); 
@@ -366,12 +401,10 @@ function DashboardVideoDetails() {
                             "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759812746/day-picture-id1163588010_xjbdnc.jpg";
                         }}
                       />
-                      {video.duration && (
-                        <span className="absolute bottom-1 right-1 bg-black/80 text-white text-xs px-1 rounded">
-                          {Math.floor(video.duration / 60)}:
-                          {(video.duration % 60).toString().padStart(2, "0")}
-                        </span>
-                      )}
+                      <VideoDurationBadge 
+                        videoUrl={getVideoUrl(video.video_file)}
+                        videoFile={video.video_file}
+                      />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="text-sm font-medium text-gray-900 line-clamp-2 mb-1">

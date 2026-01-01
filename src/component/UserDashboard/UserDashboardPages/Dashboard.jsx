@@ -211,15 +211,6 @@ const Dashboard = () => {
                 <h4 className="font-bold text-gray-900 text-[20px]">
                   {leader.name || "Anonymous"}
                 </h4>
-                <p className="text-[14px] text-gray-500 mb-1">
-                  {leader.completed_video} videos Completed
-                </p>
-                <div className="flex items-center justify-between">
-                  <p className="text-[16px] text-gray-600">Learning time</p>
-                  <p className="text-[20px] font-bold text-gray-800">
-                    {leader.learning_time}
-                  </p>
-                </div>
               </div>
             ))}
           </div>
@@ -238,12 +229,12 @@ const Dashboard = () => {
                   <th className="text-left py-3 px-4 text-[14px] font-medium text-gray-700">
                     Score
                   </th>
-                  <th className="text-left py-3 px-4 text-[14px] font-medium text-gray-700">
+                  {/* <th className="text-left py-3 px-4 text-[14px] font-medium text-gray-700">
                     Learning Time
                   </th>
                   <th className="text-left py-3 px-4 text-[14px] font-medium text-gray-700">
                     Completed video
-                  </th>
+                  </th> */}
                   <th className="text-left py-3 px-4 text-[14px] font-medium text-gray-700">
                     Total point
                   </th>
@@ -273,7 +264,7 @@ const Dashboard = () => {
                     <td className="py-3 px-4 text-sm text-gray-600">
                       {row.state || "N/A"}
                     </td>
-                    <td className="py-3 px-4 text-sm text-gray-600">
+                    {/* <td className="py-3 px-4 text-sm text-gray-600">
                       <div className="flex items-center space-x-2">
                         <MdAccessTimeFilled />
                         <span>{row.learning_time}</span>
@@ -284,7 +275,7 @@ const Dashboard = () => {
                         <FaVideo />
                         <span>{row.completed_video} videos</span>
                       </div>
-                    </td>
+                    </td> */}
                     <td className="py-3 px-4 text-sm text-gray-600">
                       <div className="flex items-center space-x-2">
                         <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
