@@ -108,7 +108,7 @@ const Dashboard = () => {
           <div className="flex  justify-between mb-6">
             <div className="flex items-center space-x-4 mb-6">
               <img
-                src={`${baseUrl}${userInfo.profile_picture}`}
+                src={`${userInfo.profile_picture}`}
                 alt="Profile"
                 className="w-20 h-20 rounded-full object-cover"
               />

@@ -42,7 +42,7 @@ function RecordedTalks({ talks, selectedCategory, isLoading }) {
       {filteredTalks.map((talk) => {
         const videoUrl = `${MEDIA_URL}${talk.talk_file}`;
         const thumbnailUrl = talk.thumbnail
-  ? `${MEDIA_URL}${talk.thumbnail}`
+  ? `${talk.thumbnail}`
   : "/placeholder-video.jpg";
 
         const isPlaying = playingId === talk.id;

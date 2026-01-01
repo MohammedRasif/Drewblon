@@ -51,7 +51,7 @@ const UserDashboardNavbar = () => {
           <img
             src={
               profileInfo?.user?.profile_picture
-                ? `${BASE_URL}${profileInfo.user.profile_picture}`
+                ? `${profileInfo.user.profile_picture}`
                 : "/default-avatar.png"
             }
             className="rounded-full h-8 w-8 object-cover"

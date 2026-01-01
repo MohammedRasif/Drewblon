@@ -121,7 +121,7 @@ const Navbar = () => {
               <img
                 src={
                   user.profile_picture
-                    ? `${BASE_URL}${user.profile_picture}`
+                    ? `${user.profile_picture}`
                     : "https://via.placeholder.com/40"
                 }
                 alt={user.name}
