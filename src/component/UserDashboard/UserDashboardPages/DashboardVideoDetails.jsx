@@ -18,8 +18,10 @@ function DashboardVideoDetails() {
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [videoError, setVideoError] = useState(false);
   const videoRef = useRef(null);
   const containerRef = useRef(null);
+  
 
   const { data: playlistData, isLoading: playlistLoading } =
     useShowAllVideoDetailsQuery(id);
@@ -83,11 +85,16 @@ function DashboardVideoDetails() {
     }
   };
 
-  const handleLoadedMetadata = () => {
-    if (videoRef.current) {
-      setDuration(videoRef.current.duration);
-    }
-  };
+  // const handleLoadedMetadata = () => {
+  //   if (videoRef.current) {
+  //     setDuration(videoRef.current.duration);
+  //   }
+  // };
+    const handleLoadedMetadata = () => {
+      if (videoRef.current && !isNaN(videoRef.current.duration)) {
+        setDuration(videoRef.current.duration);
+      }
+    };
 
    
 
@@ -132,6 +139,7 @@ function DashboardVideoDetails() {
     setActiveLesson(index);
     setIsPlaying(false);
     setCurrentTime(0);
+    setDuration(0); // Reset duration for new video
   };
 
   if (playlistLoading) {
@@ -244,9 +252,13 @@ function DashboardVideoDetails() {
                         )}
                       </button>
 
-                      <span className="text-white text-sm">
+                      {/* <span className="text-white text-sm">
                         {formatTime(currentTime)} /{" "}
                         {formatTime(duration || currentVideo?.duration || 0)}
+                      </span> */}
+
+                      <span className="text-white text-sm">
+                        {formatTime(currentTime)} / {formatTime(duration)}
                       </span>
 
                       <div className="flex items-center gap-2">
