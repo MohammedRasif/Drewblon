@@ -40,7 +40,7 @@ function RecordedTalks({ talks, selectedCategory, isLoading }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {filteredTalks.map((talk) => {
-        const videoUrl = `${MEDIA_URL}${talk.talk_file}`;
+        const videoUrl = `${talk.talk_file}`;
         const thumbnailUrl = talk.thumbnail
   ? `${talk.thumbnail}`
   : "/placeholder-video.jpg";

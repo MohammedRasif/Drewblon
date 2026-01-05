@@ -12,13 +12,10 @@ function Simulation() {
   const { data: compete } = useShowCompetedQuery();
   const { data: progress } = useShowInProgressQuery();
 
-  // API থেকে আসা Completed Simulations
   const completedSimulations = compete?.results || [];
 
-  // API থেকে আসা In Progress Simulations
   const inProgressSimulations = progress?.results || [];
 
-  // Date format করার ফাংশন (যদি দরকার হয়)
   const formatDate = (dateString) => {
     try {
       return format(new Date(dateString), "MM/d/yyyy");
@@ -27,7 +24,6 @@ function Simulation() {
     }
   };
 
-  // Review / Continue বাটনে ক্লিক হ্যান্ডলার
   const handleCardClick = (id) => {
     navigate(`/dashboard/details/${id}`);
   };

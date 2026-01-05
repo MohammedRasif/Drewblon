@@ -344,9 +344,9 @@ function DashboardVideoDetails() {
                     {playlistData?.description || playlistData?.topic_name}
                   </p>
                 </div>
-                <button className="px-4 py-1.5 text-sm font-medium text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 transition-colors">
+                {/* <button className="px-4 py-1.5 text-sm font-medium text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 transition-colors">
                   Follow
-                </button>
+                </button> */}
               </div>
 
               {/* Stats */}
