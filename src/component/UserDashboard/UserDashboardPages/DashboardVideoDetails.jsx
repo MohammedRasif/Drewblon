@@ -7,36 +7,58 @@ import {
   useShowSuggestedVideQuery,
 } from "../../../redux/features/baseApi";
 
-const MEDIA_BASE_URL = "https://noncircuitous-lauryn-pseudosocialistic.ngrok-free.dev";
+const MEDIA_BASE_URL =
+  "https://noncircuitous-lauryn-pseudosocialistic.ngrok-free.dev";
 
 // Component to get actual video duration from file
-function VideoDurationBadge({ videoUrl, videoFile }) {
+function VideoDurationBadge({ videoUrl, videoFile, backendDuration }) {
   const [actualDuration, setActualDuration] = useState(null);
   const videoRef = useRef(null);
 
   useEffect(() => {
+    if (backendDuration && backendDuration > 0) {
+      setActualDuration(backendDuration);
+      return;
+    }
+
     if (!videoUrl) return;
 
-    const video = document.createElement('video');
+    const video = document.createElement("video");
+    video.preload = "metadata"; // শুধু metadata লোড করবে, পুরো ভিডিও না
+
+    const timeout = setTimeout(() => {
+      video.src = ""; // টাইমআউট হলে বন্ধ করো
+    }, 8000); // 8 সেকেন্ড পর্যন্ত অপেক্ষা করবে
+
     video.onloadedmetadata = () => {
-      if (!isNaN(video.duration)) {
-        setActualDuration(video.duration);
+      clearTimeout(timeout);
+      if (video.duration && !isNaN(video.duration) && video.duration < 3600) {
+        // 1 ঘণ্টার বেশি হলে স্কিপ (বড় ফাইল)
+        setActualDuration(Math.floor(video.duration));
       }
     };
-    video.onerror = () => {
-      console.warn("Failed to load video metadata for:", videoFile);
-    };
-    video.src = videoUrl;
-  }, [videoUrl, videoFile]);
 
-  if (actualDuration === null) return null;
+    video.onerror = () => {
+      clearTimeout(timeout);
+    };
+
+    video.src = videoUrl;
+
+    return () => {
+      clearTimeout(timeout);
+      video.src = "";
+      video.onloadmetadata = null;
+      video.onerror = null;
+    };
+  }, [videoUrl, backendDuration]);
+
+  if (!actualDuration) return null;
 
   const formatDuration = (seconds) => {
     const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
+    const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
-
   return (
     <span className="absolute bottom-1 right-1 bg-black/80 text-white text-xs px-1 rounded">
       {formatDuration(actualDuration)}
@@ -45,8 +67,8 @@ function VideoDurationBadge({ videoUrl, videoFile }) {
 }
 
 function DashboardVideoDetails() {
-  const { id } = useParams(); 
-  console.log({id})
+  const { id } = useParams();
+  console.log({ id });
   const [activeLesson, setActiveLesson] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -56,26 +78,24 @@ function DashboardVideoDetails() {
   const [videoError, setVideoError] = useState(false);
   const videoRef = useRef(null);
   const containerRef = useRef(null);
-  
+  const [isLoading, setIsLoading] = useState(false);
 
   const { data: playlistData, isLoading: playlistLoading } =
     useShowAllVideoDetailsQuery(id);
   const { data: suggestTopic, isLoading: suggestLoading } =
     useShowSuggestedVideQuery(id);
 
-    console.log({suggestTopic, playlistData})
+  console.log({ suggestTopic, playlistData });
 
   const videos = playlistData?.videos || [];
   const currentVideo = videos[activeLesson];
 
-
-   // Helper function to construct full video URL
+  // Helper function to construct full video URL
   const getVideoUrl = (videoFile) => {
     if (!videoFile) return null;
     if (videoFile.startsWith("http")) return videoFile;
     return `${MEDIA_BASE_URL}${videoFile}`;
   };
-
 
   // const togglePlay = () => {
   //   if (videoRef.current) {
@@ -90,7 +110,7 @@ function DashboardVideoDetails() {
 
   const togglePlay = () => {
     if (!videoRef.current) return;
-    
+
     const videoUrl = getVideoUrl(currentVideo?.video_file);
     if (!videoUrl) {
       setVideoError("Video source not available");
@@ -125,22 +145,24 @@ function DashboardVideoDetails() {
   //     setDuration(videoRef.current.duration);
   //   }
   // };
-    const handleLoadedMetadata = () => {
-      if (videoRef.current && !isNaN(videoRef.current.duration)) {
-        setDuration(videoRef.current.duration);
-      }
-    };
+ const handleLoadedMetadata = () => {
+  if (videoRef.current) {
+    const dur = videoRef.current.duration;
+    if (!isNaN(dur) && isFinite(dur) && dur > 0) {
+      setDuration(dur);
+    } else {
+      console.warn("Invalid duration detected:", dur);
+    }
+  }
+};
 
-   
-
-   const handleProgressClick = (e) => {
+  const handleProgressClick = (e) => {
     if (videoRef.current && duration) {
       const rect = e.currentTarget.getBoundingClientRect();
       const pos = (e.clientX - rect.left) / rect.width;
       videoRef.current.currentTime = pos * duration;
     }
   };
-
 
   const handleVolumeChange = (e) => {
     const newVolume = parseFloat(e.target.value);
@@ -205,16 +227,19 @@ function DashboardVideoDetails() {
           <div className="lg:col-span-2 bg-white shadow-md p-4 rounded-md">
             {/* Video Container */}
             <div ref={containerRef} className="rounded-lg mb-4">
-              <div className="relative aspect-video bg-gray-900 group">
+              <div className="relative aspect-video bg-gray-900 group overflow-hidden rounded-lg">
                 {/* Video Element */}
                 {currentVideo?.video_file ? (
                   <video
                     ref={videoRef}
                     // src={currentVideo.video_file}
-                     src={getVideoUrl(currentVideo.video_file)}
+                    src={getVideoUrl(currentVideo.video_file)}
                     className="w-full h-full object-cover"
                     onTimeUpdate={handleTimeUpdate}
                     onLoadedMetadata={handleLoadedMetadata}
+                    onCanPlay={() => setVideoError(null)} 
+                    onWaiting={() => setIsLoading(true)} 
+                    onPlaying={() => setIsLoading(false)}
                     onClick={togglePlay}
                   />
                 ) : (
@@ -249,10 +274,7 @@ function DashboardVideoDetails() {
                 {/* Video Controls */}
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity">
                   {/* Progress Bar */}
-                  <div
-                    className="w-full h-1 bg-white/30 rounded-full mb-3 cursor-pointer"
-                    onClick={handleProgressClick}
-                  >
+                  <div className="w-full h-1 bg-white/30 rounded-full mb-3 cursor-pointer overflow-hidden">
                     <div
                       className="h-full bg-blue-600 rounded-full transition-all"
                       style={{
@@ -358,9 +380,8 @@ function DashboardVideoDetails() {
           </div>
 
           {/* Right Side - Video List */}
-         
 
-         {/* Right Side - Video List */}
+          {/* Right Side - Video List */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg p-5 shadow-sm">
               <div className="flex items-start justify-between mb-2">
@@ -401,9 +422,10 @@ function DashboardVideoDetails() {
                             "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759812746/day-picture-id1163588010_xjbdnc.jpg";
                         }}
                       />
-                      <VideoDurationBadge 
+                      <VideoDurationBadge
                         videoUrl={getVideoUrl(video.video_file)}
                         videoFile={video.video_file}
+                        backendDuration={video.duration}
                       />
                     </div>
                     <div className="flex-1 min-w-0">

@@ -1,11 +1,12 @@
 import { FaStar, FaClock } from "react-icons/fa";
 import SimulationTask from "./SimulationTask";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   useShowCompetedQuery,
   useShowInProgressQuery,
 } from "../../../redux/features/baseApi";
 import { format } from "date-fns";
+import { useState } from "react";
 
 function Simulation() {
   const navigate = useNavigate();
@@ -13,8 +14,11 @@ function Simulation() {
   const { data: progress } = useShowInProgressQuery();
 
   const completedSimulations = compete?.results || [];
-
   const inProgressSimulations = progress?.results || [];
+
+  // State to track if "See all" is clicked for each section
+  const [showAllCompleted, setShowAllCompleted] = useState(false);
+  const [showAllInProgress, setShowAllInProgress] = useState(false);
 
   const formatDate = (dateString) => {
     try {
@@ -28,6 +32,15 @@ function Simulation() {
     navigate(`/dashboard/details/${id}`);
   };
 
+  // Show only first 3 unless "See all" is active
+  const displayedCompleted = showAllCompleted
+    ? completedSimulations
+    : completedSimulations.slice(0, 3);
+
+  const displayedInProgress = showAllInProgress
+    ? inProgressSimulations
+    : inProgressSimulations.slice(0, 3);
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <SimulationTask />
@@ -36,21 +49,25 @@ function Simulation() {
       <div className="mb-12">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold text-gray-900">Completed</h2>
-          <NavLink to="/dashboard/seeAllSimulation">
-            <button className="text-blue-600 hover:text-blue-700 font-medium text-sm">
-              See all
+          {completedSimulations.length > 3 && (
+            <button
+              onClick={() => setShowAllCompleted(!showAllCompleted)}
+              className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+            >
+              {showAllCompleted ? "Show less" : "See all"}
             </button>
-          </NavLink>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {completedSimulations.length > 0 ? (
-            completedSimulations.map((sim) => (
+          {displayedCompleted.length > 0 ? (
+            displayedCompleted.map((sim) => (
               <div
                 key={sim.id}
-                className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+                className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => handleCardClick(sim.id)}
               >
-                {/* Author Info - তথ্য না থাকলে ডিফল্ট দেখাবে */}
+                {/* Author Info */}
                 <div className="p-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-gray-200 border-2 border-dashed border-gray-300" />
@@ -74,12 +91,12 @@ function Simulation() {
                 <div className="relative">
                   <img
                     src={
-                      sim.thumbnail.startsWith("/media")
-                        ? `https://your-backend-domain.com${sim.thumbnail}` // ← তোমার ব্যাকএন্ড URL দিবি
+                      sim.thumbnail?.startsWith("/media")
+                        ? `https://your-backend-domain.com${sim.thumbnail}`
                         : sim.thumbnail || "/placeholder.svg"
                     }
                     alt={sim.title}
-                    className="w-full h-48 px-4.5 object-cover"
+                    className="w-full h-48 object-cover px-4.5"
                   />
                 </div>
 
@@ -98,11 +115,7 @@ function Simulation() {
                     on {formatDate(sim.completed_at)}
                   </p>
 
-                  {/* Review Button - Dynamic ID */}
-                  <button
-                    onClick={() => handleCardClick(sim.id)}
-                    className="w-full py-2 px-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
-                  >
+                  <button className="w-full py-2 px-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
                     Review
                   </button>
                 </div>
@@ -120,19 +133,23 @@ function Simulation() {
       <div>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold text-gray-900">In Progress</h2>
-          <NavLink to="/dashboard/seeAllSimulation">
-            <button className="text-blue-600 hover:text-blue-700 font-medium text-sm">
-              See all
+          {inProgressSimulations.length > 3 && (
+            <button
+              onClick={() => setShowAllInProgress(!showAllInProgress)}
+              className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+            >
+              {showAllInProgress ? "Show less" : "See all"}
             </button>
-          </NavLink>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {inProgressSimulations.length > 0 ? (
-            inProgressSimulations.map((sim) => (
+          {displayedInProgress.length > 0 ? (
+            displayedInProgress.map((sim) => (
               <div
                 key={sim.id}
-                className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+                className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => handleCardClick(sim.id)}
               >
                 {/* Author Info */}
                 <div className="p-4 flex items-center justify-between">
@@ -158,15 +175,17 @@ function Simulation() {
                 <div className="relative">
                   <img
                     src={
-                      sim.thumbnail.startsWith("/media")
-                        ? `https://your-backend-domain.com${sim.thumbnail}` // ← এখানে তোমার API base URL দিবি
+                      sim.thumbnail?.startsWith("/media")
+                        ? `https://your-backend-domain.com${sim.thumbnail}`
                         : sim.thumbnail || "/placeholder.svg"
                     }
                     alt={sim.title}
                     className="w-full h-48 object-cover"
                   />
                   <div className="absolute bottom-3 right-3 bg-white px-3 py-1 rounded-full text-xs font-medium text-gray-700 shadow-md">
-                    {sim.remaining_time ? `${Math.ceil(sim.remaining_time / 60)} min left` : "Time left"}
+                    {sim.remaining_time
+                      ? `${Math.ceil(sim.remaining_time / 60)} min left`
+                      : "Time left"}
                   </div>
                 </div>
 
@@ -184,16 +203,12 @@ function Simulation() {
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div
                         className="bg-[#8EC5FF] h-2 rounded-full transition-all"
-                        style={{ width: `${Math.min(sim.watch_percentage, 100)}%` }}
+                        style={{ width: `${Math.min(sim.watch_percentage || 0, 100)}%` }}
                       ></div>
                     </div>
                   </div>
 
-                  {/* Continue Button - Dynamic ID */}
-                  <button
-                    onClick={() => handleCardClick(sim.id)}
-                    className="w-full py-2 px-4 bg-[#3565FC] text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium flex items-center justify-center gap-2"
-                  >
+                  <button className="w-full py-2 px-4 bg-[#3565FC] text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium flex items-center justify-center gap-2">
                     <FaClock className="w-4 h-4" />
                     Continue
                   </button>
