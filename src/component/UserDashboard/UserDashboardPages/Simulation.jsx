@@ -32,7 +32,6 @@ function Simulation() {
     navigate(`/dashboard/details/${id}`);
   };
 
-  // Show only first 3 unless "See all" is active
   const displayedCompleted = showAllCompleted
     ? completedSimulations
     : completedSimulations.slice(0, 3);
@@ -87,7 +86,6 @@ function Simulation() {
                   </span>
                 </div>
 
-                {/* Thumbnail */}
                 <div className="relative">
                   <img
                     src={
@@ -100,7 +98,6 @@ function Simulation() {
                   />
                 </div>
 
-                {/* Content */}
                 <div className="p-4">
                   <h4 className="text-base font-semibold text-gray-900 mb-2">
                     {sim.title}
@@ -129,7 +126,6 @@ function Simulation() {
         </div>
       </div>
 
-      {/* In Progress Section */}
       <div>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold text-gray-900">In Progress</h2>
@@ -151,7 +147,6 @@ function Simulation() {
                 className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
                 onClick={() => handleCardClick(sim.id)}
               >
-                {/* Author Info */}
                 <div className="p-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-gray-200 border-2 border-dashed border-gray-300" />
@@ -171,7 +166,6 @@ function Simulation() {
                   </span>
                 </div>
 
-                {/* Thumbnail with Time Badge */}
                 <div className="relative">
                   <img
                     src={
@@ -189,7 +183,6 @@ function Simulation() {
                   </div>
                 </div>
 
-                {/* Content */}
                 <div className="p-4">
                   <h4 className="text-base font-semibold text-gray-900 mb-2">
                     {sim.title}
