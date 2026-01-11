@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const authentication = createApi({
   reducerPath: "authentication",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://noncircuitous-lauryn-pseudosocialistic.ngrok-free.dev/api",
+    baseUrl: "https://1waymirror.com/backend/api",
     prepareHeaders: (headers) => {
       headers.set("ngrok-skip-browser-warning", "true");
       return headers;
