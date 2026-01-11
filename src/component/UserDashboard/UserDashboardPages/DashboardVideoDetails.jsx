@@ -8,7 +8,7 @@ import {
 } from "../../../redux/features/baseApi";
 
 const MEDIA_BASE_URL =
-  "https://noncircuitous-lauryn-pseudosocialistic.ngrok-free.dev";
+  "https://1waymirror.com/backend";
 
 // Component to get actual video duration from file
 function VideoDurationBadge({ videoUrl, videoFile, backendDuration }) {

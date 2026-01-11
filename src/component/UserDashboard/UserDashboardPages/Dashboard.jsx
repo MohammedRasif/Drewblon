@@ -48,7 +48,7 @@ const Dashboard = () => {
     },
   ];
 
-  const baseUrl = "https://noncircuitous-lauryn-pseudosocialistic.ngrok-free.dev"
+  const baseUrl = "https://1waymirror.com/backend"
   const careerInterests = userInfo.career_interest || [];
   
   const extracurricularActivities = userInfo.extracurricular_activities || [];

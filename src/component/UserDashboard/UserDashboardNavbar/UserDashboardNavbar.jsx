@@ -15,7 +15,7 @@ const UserDashboardNavbar = () => {
     refetch,
   } = useShowProfileInformationQuery();
   console.log(profileInfo);
-  const BASE_URL = "https://noncircuitous-lauryn-pseudosocialistic.ngrok-free.dev";
+  const BASE_URL = "https://1waymirror.com/backend";
 
   useEffect(() => {
     const handleClickOutside = (event) => {

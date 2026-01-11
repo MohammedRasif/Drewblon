@@ -22,7 +22,7 @@ function Upcomming({
     showFilterData?.today_scheduled_livestreams || [];
   const upcomingRegisteredTalks =
     showFilterData?.upcoming_registered_talks || [];
-  const baseUrl = "https://noncircuitous-lauryn-pseudosocialistic.ngrok-free.dev"
+  const baseUrl = "https://1waymirror.com/backend"
   // Get dates that have events from all livestreams
   const getDatesWithEvents = () => {
     const dates = new Set();

@@ -38,7 +38,7 @@ function DashbaordProfile({ user, updateProfile, isUpdating }) {
       const existingPic = user.profile_picture;
       if (existingPic) {
         const fullUrl = existingPic.startsWith("/media")
-          ? `https://noncircuitous-lauryn-pseudosocialistic.ngrok-free.dev${existingPic}`
+          ? `https://1waymirror.com/backend${existingPic}`
           : existingPic;
         setPreviewUrl(fullUrl);
       }

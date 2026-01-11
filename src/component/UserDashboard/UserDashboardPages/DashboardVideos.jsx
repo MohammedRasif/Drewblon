@@ -12,7 +12,7 @@ function DashboardVideos() {
   const [activeCategory, setActiveCategory] = useState("All topics");
   const [selectedTopicId, setSelectedTopicId] = useState();
   const [selectedCategoryId, setSelectedCategoryId] = useState();
-  const baseUrl = "https://noncircuitous-lauryn-pseudosocialistic.ngrok-free.dev"
+  const baseUrl = "https://1waymirror.com/backend"
   const {
     data: videoCategory,
     isLoading: categoryLoading,

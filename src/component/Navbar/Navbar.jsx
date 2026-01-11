@@ -12,7 +12,7 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const token = localStorage.getItem("access_token");
-  const BASE_URL = "https://noncircuitous-lauryn-pseudosocialistic.ngrok-free.dev";
+  const BASE_URL = "https://1waymirror.com/backend";
   const {
     data: profileInfo,
     isLoading,
