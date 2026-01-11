@@ -44,7 +44,9 @@ function DashboardFeed() {
       comments: post.comment_count,
       likes: post.like_count,
       hasImage: post.images?.length > 0 && !!post.images[0]?.image,
-      image: post.images?.[0]?.image || null, 
+      image: post.images?.[0]?.image || null,
+      videos: post.videos || [],
+      files: post.files || [],
       isLiked: post.is_liked,
     }));
   }, [postData]);
@@ -208,7 +210,36 @@ function DashboardFeed() {
                           {post.role} • {post.timeAgo}
                         </p>
                       </div>
+                      <div className="space-x-3">
+                        {post.videos?.length > 0 && (
+                          <a
+                            href={post.videos[0].video}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-4 py-1.5 bg-green-600 text-gray-100 text-xs font-medium rounded-full hover:bg-green-700 transition-colors cursor-pointer"
+                          >
+                            Video
+                          </a>
+                        )}
+
+                        {post.files?.length > 0 && (
+                          <a
+                            href={post.files[0].file}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-4 py-1.5 bg-green-600 text-gray-100 text-xs font-medium rounded-full hover:bg-green-700 transition-colors cursor-pointer"
+                          >
+                            File (
+                            {post.files[0].file_name
+                              ?.split(".")
+                              .pop()
+                              ?.toUpperCase() || "File"}
+                            )
+                          </a>
+                        )}
+                      </div>
                     </div>
+
                     <span className="px-4 py-1.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
                       {post.category}
                     </span>

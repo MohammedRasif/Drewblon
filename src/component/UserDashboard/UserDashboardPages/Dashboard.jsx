@@ -226,9 +226,9 @@ const Dashboard = () => {
                   <th className="text-left py-3 px-4 text-[14px] font-medium text-gray-700">
                     Names
                   </th>
-                  <th className="text-left py-3 px-4 text-[14px] font-medium text-gray-700">
+                  {/* <th className="text-left py-3 px-4 text-[14px] font-medium text-gray-700">
                     Score
-                  </th>
+                  </th> */}
                   {/* <th className="text-left py-3 px-4 text-[14px] font-medium text-gray-700">
                     Learning Time
                   </th>
@@ -261,9 +261,9 @@ const Dashboard = () => {
                         </span>
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-sm text-gray-600">
+                    {/* <td className="py-3 px-4 text-sm text-gray-600">
                       {row.state || "N/A"}
-                    </td>
+                    </td> */}
                     {/* <td className="py-3 px-4 text-sm text-gray-600">
                       <div className="flex items-center space-x-2">
                         <MdAccessTimeFilled />

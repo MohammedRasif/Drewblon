@@ -10,6 +10,12 @@ function Banner() {
   return (
     <div>
       <div className="poppins relative  flex flex-col items-center justify-center">
+        
+        
+        
+        
+        
+        
         <div className="text-center py-8 sm:py-12 md:py-20 px-4">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold">
             Learn from the Experts
@@ -20,6 +26,8 @@ function Banner() {
             fields.
           </p>
         </div>
+
+        
         <img
           src={image1}
           className="absolute left-0 lg:mt-20 mt-10 sm:top-12 md:top-0 w-20 sm:w-24 md:w-32 lg:w-40 z-10"
