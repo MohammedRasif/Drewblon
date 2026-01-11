@@ -11,7 +11,7 @@ import Login from "./component/Pages/Login.jsx";
 import Register from "./component/Pages/Register.jsx";
 import EmailVerification from "./component/Pages/EmailVerification.jsx";
 import Verification from "./component/Pages/Verification.jsx";
-import ForgetPassword from "./component/Pages/forgetPassword.jsx";
+import ForgetPassword from "./component/Pages/ForgetPassword.jsx";
 import SetNewPassword from "./component/Pages/SetNewPassword.jsx";
 import Pricing from "./component/Pages/Pricing.jsx";
 import DashboardFeed from "./component/UserDashboard/UserDashboardPages/DashboardFeed.jsx";

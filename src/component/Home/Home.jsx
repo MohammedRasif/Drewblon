@@ -1,5 +1,5 @@
 import About from "../Pages/About";
-import Banner from "../Pages/banner";
+import Banner from "../Pages/Banner";
 import Discover from "../Pages/Discover";
 import Education from "../Pages/Education";
 import Improve from "../Pages/Improve";
