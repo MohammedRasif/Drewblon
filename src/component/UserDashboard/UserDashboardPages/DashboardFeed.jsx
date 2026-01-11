@@ -19,14 +19,22 @@ function DashboardFeed() {
   const { data: postData = [], isLoading: postLoading } =
     useShowFeedDataQuery();
 
+  // ── এই অংশটা আপডেট করা হয়েছে ──
   const categories = useMemo(() => {
-    if (!categoryData || categoryData.length === 0) return ["All categories"];
-    const catNames = categoryData.map((cat) => cat.name);
+    // categoryData array না হলে খালি array ধরে নেবে
+    const cats = Array.isArray(categoryData) ? categoryData : [];
+
+    const catNames = cats
+      .map((cat) => cat?.name) // null/undefined এর জন্য safe
+      .filter(Boolean); // খালি/undefined name গুলো ফেলে দেবে
+
     return ["All categories", ...catNames];
   }, [categoryData]);
 
   const posts = useMemo(() => {
-    if (!postData || postData.length === 0) return [];
+    if (!postData || !Array.isArray(postData)) {
+      return [];
+    }
 
     return postData.map((post) => ({
       id: post.id,
@@ -35,22 +43,22 @@ function DashboardFeed() {
       timeAgo: post.time_ago,
       title: post.title,
       content:
-        post.content.length > 200
+        post.content?.length > 200
           ? post.content.substring(0, 200) + "..."
-          : post.content,
-      fullContent: post.content,
-      category: post.category_name,
+          : post.content || "",
+      fullContent: post.content || "",
+      category: post.category_name || "Uncategorized",
       categoryId: post.category,
-      comments: post.comment_count,
-      likes: post.like_count,
+      comments: post.comment_count || 0,
+      likes: post.like_count || 0,
       hasImage: post.images?.length > 0 && !!post.images[0]?.image,
       image: post.images?.[0]?.image || null,
       videos: post.videos || [],
       files: post.files || [],
-      isLiked: post.is_liked,
+      isLiked: post.is_liked || false,
     }));
   }, [postData]);
-  console.log(postData.content);
+  // console.log(postData.content);   // ← এটা সাধারণত undefined হবে, রাখার দরকার নেই
 
   const filteredPosts = useMemo(() => {
     return posts.filter((post) => {
@@ -119,7 +127,6 @@ function DashboardFeed() {
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <div className="relative">
           <div className="w-16 h-16 border-4 border-gray-200 rounded-full animate-spin border-t-blue-600"></div>
-          {/* <div className="absolute inset-0 w-16 h-16 border-4 border-transparent rounded-full animate-ping border-t-blue-500 opacity-75"></div> */}
         </div>
         <p className="ml-6 text-lg text-gray-600 font-medium">
           Loading feed...
