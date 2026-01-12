@@ -16,27 +16,25 @@ function DashboardFeed() {
 
   const { data: categoryData = [], isLoading: catLoading } =
     useShowListFeedDataQuery();
-  const { data: postData = [], isLoading: postLoading } =
+  const { data: feedResponse = {}, isLoading: postLoading } =
     useShowFeedDataQuery();
 
-  // ── এই অংশটা আপডেট করা হয়েছে ──
   const categories = useMemo(() => {
-    // categoryData array না হলে খালি array ধরে নেবে
     const cats = Array.isArray(categoryData) ? categoryData : [];
 
     const catNames = cats
-      .map((cat) => cat?.name) // null/undefined এর জন্য safe
-      .filter(Boolean); // খালি/undefined name গুলো ফেলে দেবে
+      .map((cat) => cat?.name) 
+      .filter(Boolean); 
 
     return ["All categories", ...catNames];
   }, [categoryData]);
 
   const posts = useMemo(() => {
-    if (!postData || !Array.isArray(postData)) {
-      return [];
-    }
+    const results = Array.isArray(feedResponse?.results)
+      ? feedResponse.results
+      : [];
 
-    return postData.map((post) => ({
+    return results.map((post) => ({
       id: post.id,
       author: post.author_name,
       role: post.author_title || "Member",
@@ -57,8 +55,7 @@ function DashboardFeed() {
       files: post.files || [],
       isLiked: post.is_liked || false,
     }));
-  }, [postData]);
-  // console.log(postData.content);   // ← এটা সাধারণত undefined হবে, রাখার দরকার নেই
+  }, [feedResponse]);
 
   const filteredPosts = useMemo(() => {
     return posts.filter((post) => {
