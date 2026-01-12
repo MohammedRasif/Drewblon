@@ -14,27 +14,26 @@ function DashboardFeed() {
   const [expandedPosts, setExpandedPosts] = useState(new Set());
   const [commentInputs, setCommentInputs] = useState({});
 
-  const { data: categoryData = [], isLoading: catLoading } =
+  const { data: categoryData = {}, isLoading: catLoading } =
     useShowListFeedDataQuery();
   const { data: feedResponse = {}, isLoading: postLoading } =
     useShowFeedDataQuery();
 
   const categories = useMemo(() => {
-    const cats = Array.isArray(categoryData) ? categoryData : [];
+    const categoryList = categoryData?.results || [];
 
-    const catNames = cats
-      .map((cat) => cat?.name) 
-      .filter(Boolean); 
+    const catNames = Array.isArray(categoryList)
+      ? categoryList.map((cat) => cat?.name).filter(Boolean)
+      : [];
 
     return ["All categories", ...catNames];
   }, [categoryData]);
 
   const posts = useMemo(() => {
-    const results = Array.isArray(feedResponse?.results)
-      ? feedResponse.results
-      : [];
+    // এখানে ভুল ছিল → results.map করা হয়েছিল কিন্তু results ডিফাইন করা হয়নি
+    const rawPosts = feedResponse?.results || [];
 
-    return results.map((post) => ({
+    return rawPosts.map((post) => ({
       id: post.id,
       author: post.author_name,
       role: post.author_title || "Member",
