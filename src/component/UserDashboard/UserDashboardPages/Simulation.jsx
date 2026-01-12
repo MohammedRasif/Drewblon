@@ -165,7 +165,6 @@ function Simulation() {
                     {sim.topic_name || "Academic"}
                   </span>
                 </div>
-
                 <div className="relative">
                   <img
                     src={

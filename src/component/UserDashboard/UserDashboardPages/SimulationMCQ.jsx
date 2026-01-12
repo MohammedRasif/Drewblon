@@ -28,9 +28,10 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
   const [submitMCQ, { isLoading: isSubmitting }] = useSimulationQuestionSubmitMutation();
 
   const questions = questionsData?.questions || [];
+  const isCompleted = questionsData?.is_completed === true;
 
-  // If questions contain student_answer → review mode
-  const isReviewMode = questions.length > 0 && questions[0]?.student_answer !== undefined;
+  const isReviewMode = isCompleted || 
+    (questions.length > 0 && questions.every(q => q.student_answer !== null && q.student_answer !== undefined));
 
   useEffect(() => {
     if (isOpen) {
@@ -53,7 +54,6 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
 
     const currentQ = questions[currentQuestion];
 
-    // Save current answer
     setAnswers((prev) => [
       ...prev,
       {
@@ -62,19 +62,16 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
       },
     ]);
 
-    // Move to next question immediately (no feedback)
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
       setSelectedAnswer(null);
     } else {
-      // Last question → submit automatically
       handleFinalSubmit();
     }
   };
 
   const handleFinalSubmit = async () => {
     try {
-      // Add last answer if not already added
       let finalAnswers = [...answers];
 
       if (selectedAnswer !== null) {
@@ -109,7 +106,7 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
 
   const handleComplete = () => {
     onClose();
-    window.location.reload();
+    window.location.reload(); 
   };
 
   if (!isOpen) return null;
@@ -144,7 +141,6 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
     );
   }
 
-  // Completion screen (only after first attempt)
   if (quizCompleted && submissionResult && !isReviewMode) {
     return (
       <div className="fixed inset-0 bg-black/5 backdrop-blur-[2px] bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -196,9 +192,8 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
     { label: "D", text: currentQ.option_d },
   ];
 
-  // ─── Review mode display logic ───────────────────────────────────────
   let selectedOption = null;
-  let isCorrect = true;
+  let isCorrect = false;
 
   if (isReviewMode && currentQ.student_answer) {
     selectedOption = currentQ.student_answer.selected_option;
@@ -242,10 +237,7 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
           </div>
         </div>
 
-        {/* Content */}
         <div className="p-6 space-y-6">
-          {/* <h3 className="text-xl font-medium text-gray-800 mb-6">{currentQ.text}</h3> */}
-
           {/* Options */}
           <div className="space-y-3">
             {options.map((option) => {

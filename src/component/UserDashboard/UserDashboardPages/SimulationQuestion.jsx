@@ -6,22 +6,22 @@ import SimulationMCQ from "./SimulationMCQ";
 import { useShowSimulationCategoryQuestionQuery } from "../../../redux/features/baseApi";
 
 function SimulationQuestion() {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const taskId = localStorage.getItem("SimulationCategory");
-  
-  const { data: questionData, isLoading } = useShowSimulationCategoryQuestionQuery({
-    taskId,
-    categoryId: id
-  });
+
+  const { data: questionData, isLoading } =
+    useShowSimulationCategoryQuestionQuery({
+      taskId,
+      categoryId: id,
+    });
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState(null);
 
-  // Convert teacher_sim_levels object to array
-  const levels = questionData?.teacher_sim_levels 
+  const levels = questionData?.teacher_sim_levels
     ? Object.entries(questionData.teacher_sim_levels).map(([level, data]) => ({
         id: parseInt(level),
-        ...data
+        ...data,
       }))
     : [];
 
@@ -44,7 +44,10 @@ function SimulationQuestion() {
         <div className="w-[340px] h-[220px] bg-gray-200 animate-pulse rounded-xl mb-14" />
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <div key={i} className="bg-gray-200 rounded-lg h-32 animate-pulse" />
+            <div
+              key={i}
+              className="bg-gray-200 rounded-lg h-32 animate-pulse"
+            />
           ))}
         </div>
       </div>
@@ -96,59 +99,50 @@ function SimulationQuestion() {
       {/* Questions Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {levels.map((level) => (
-  <div
-    key={level.id}
-    className="bg-[#F5F5F5] rounded-lg p-6 hover:shadow-md transition-shadow cursor-pointer"
-    onClick={() => handleCardClick(level.id)}
-  >
-    <div className="flex flex-col items-center justify-center min-h-[140px]">
-      {level.is_completed ? (
-        <>
-          <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mb-2">
-            <IoCheckmark className="w-6 h-6 text-white" />
+          <div
+            key={level.id}
+            className="bg-[#F5F5F5] rounded-lg p-6 hover:shadow-md transition-shadow cursor-pointer"
+            onClick={() => handleCardClick(level.id)}
+          >
+            <div className="flex flex-col items-center justify-center min-h-[140px]">
+              {level.is_completed ? (
+                <>
+                  <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mb-2">
+                    <IoCheckmark className="w-6 h-6 text-white" />
+                  </div>
+                  <p className="text-[24px] font-medium text-gray-700 mb-2">
+                    Completed
+                  </p>
+                </>
+              ) : (
+                <p className="text-2xl font-semibold text-gray-800 mb-4">
+                  {level.id}
+                </p>
+              )}
+
+              {/* Stars – এখানেই মূল পরিবর্তন */}
+              <div className="flex gap-0.5">
+                {[...Array(3)].map((_, i) => (
+                  <FaStar
+                    key={i}
+                    className={`w-5 h-5 ${
+                      i < level.stars
+                        ? "text-yellow-400 fill-current"
+                        : "text-gray-300 fill-current"
+                    }`}
+                  />
+                ))}
+              </div>
+
+              {/* Optional: show progress if some questions answered but not completed */}
+              {!level.is_completed && level.questions_answered > 0 && (
+                <p className="text-xs text-gray-600 mt-3">
+                  {level.questions_answered} answered
+                </p>
+              )}
+            </div>
           </div>
-          <p className="text-[24px] font-medium text-gray-700 mb-2">
-            Completed
-          </p>
-        </>
-      ) : (
-        <p className="text-2xl font-semibold text-gray-800 mb-4">
-          {level.id}
-        </p>
-      )}
-
-      {/* Stars display */}
-      <div className="flex gap-0.5">
-        {[...Array(3)].map((_, i) => {
-          // Completed → show real stars
-          // Not completed + stars > 0 → show real stars (rare case in your current data)
-          // Not completed + stars === 0 → show gray stars
-          const isActiveStar =
-            level.is_completed ||
-            (level.stars > 0 && i < level.stars);
-
-          return (
-            <FaStar
-              key={i}
-              className={`w-5 h-5 ${
-                isActiveStar
-                  ? "text-yellow-400 fill-current"
-                  : "text-gray-300 fill-current"
-              }`}
-            />
-          );
-        })}
-      </div>
-
-      {/* Optional: show progress if some questions answered but not completed */}
-      {!level.is_completed && level.questions_answered > 0 && (
-        <p className="text-xs text-gray-600 mt-3">
-          {level.questions_answered} answered
-        </p>
-      )}
-    </div>
-  </div>
-))}
+        ))}
       </div>
 
       {/* Popup with SimulationMCQ */}
