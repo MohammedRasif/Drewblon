@@ -7,8 +7,7 @@ import {
   useShowSuggestedVideQuery,
 } from "../../../redux/features/baseApi";
 
-const MEDIA_BASE_URL =
-  "https://1waymirror.com/backend";
+const MEDIA_BASE_URL = "https://1waymirror.com/backend";
 
 // Component to get actual video duration from file
 function VideoDurationBadge({ videoUrl, videoFile, backendDuration }) {
@@ -24,16 +23,15 @@ function VideoDurationBadge({ videoUrl, videoFile, backendDuration }) {
     if (!videoUrl) return;
 
     const video = document.createElement("video");
-    video.preload = "metadata"; // শুধু metadata লোড করবে, পুরো ভিডিও না
+    video.preload = "metadata";
 
     const timeout = setTimeout(() => {
-      video.src = ""; // টাইমআউট হলে বন্ধ করো
-    }, 8000); // 8 সেকেন্ড পর্যন্ত অপেক্ষা করবে
+      video.src = "";
+    }, 8000);
 
     video.onloadedmetadata = () => {
       clearTimeout(timeout);
       if (video.duration && !isNaN(video.duration) && video.duration < 3600) {
-        // 1 ঘণ্টার বেশি হলে স্কিপ (বড় ফাইল)
         setActualDuration(Math.floor(video.duration));
       }
     };
@@ -68,7 +66,6 @@ function VideoDurationBadge({ videoUrl, videoFile, backendDuration }) {
 
 function DashboardVideoDetails() {
   const { id } = useParams();
-  console.log({ id });
   const [activeLesson, setActiveLesson] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -76,16 +73,14 @@ function DashboardVideoDetails() {
   const [volume, setVolume] = useState(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [videoError, setVideoError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const videoRef = useRef(null);
   const containerRef = useRef(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   const { data: playlistData, isLoading: playlistLoading } =
     useShowAllVideoDetailsQuery(id);
   const { data: suggestTopic, isLoading: suggestLoading } =
     useShowSuggestedVideQuery(id);
-
-  console.log({ suggestTopic, playlistData });
 
   const videos = playlistData?.videos || [];
   const currentVideo = videos[activeLesson];
@@ -97,18 +92,36 @@ function DashboardVideoDetails() {
     return `${MEDIA_BASE_URL}${videoFile}`;
   };
 
-  // const togglePlay = () => {
-  //   if (videoRef.current) {
-  //     if (isPlaying) {
-  //       videoRef.current.pause();
-  //     } else {
-  //       videoRef.current.play();
-  //     }
-  //     setIsPlaying(!isPlaying);
-  //   }
-  // };
+  // Helper function to get YouTube embed URL
+  const getYouTubeEmbedUrl = (url) => {
+    if (!url) return null;
+    
+    // Extract video ID from various YouTube URL formats
+    let videoId = null;
+    
+    if (url.includes("youtube.com/watch?v=")) {
+      videoId = url.split("v=")[1]?.split("&")[0];
+    } else if (url.includes("youtu.be/")) {
+      videoId = url.split("youtu.be/")[1]?.split("?")[0];
+    } else if (url.includes("youtube.com/embed/")) {
+      videoId = url.split("embed/")[1]?.split("?")[0];
+    }
+    
+    if (videoId) {
+      return `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0`;
+    }
+    
+    return null;
+  };
+
+  const isYouTubeVideo = currentVideo?.source_type === "youtube" && currentVideo?.yt_video_url;
 
   const togglePlay = () => {
+    if (isYouTubeVideo) {
+      // YouTube videos are controlled by iframe, can't control programmatically
+      return;
+    }
+
     if (!videoRef.current) return;
 
     const videoUrl = getVideoUrl(currentVideo?.video_file);
@@ -140,23 +153,18 @@ function DashboardVideoDetails() {
     }
   };
 
-  // const handleLoadedMetadata = () => {
-  //   if (videoRef.current) {
-  //     setDuration(videoRef.current.duration);
-  //   }
-  // };
- const handleLoadedMetadata = () => {
-  if (videoRef.current) {
-    const dur = videoRef.current.duration;
-    if (!isNaN(dur) && isFinite(dur) && dur > 0) {
-      setDuration(dur);
-    } else {
-      console.warn("Invalid duration detected:", dur);
+  const handleLoadedMetadata = () => {
+    if (videoRef.current) {
+      const dur = videoRef.current.duration;
+      if (!isNaN(dur) && isFinite(dur) && dur > 0) {
+        setDuration(dur);
+      }
     }
-  }
-};
+  };
 
   const handleProgressClick = (e) => {
+    if (isYouTubeVideo) return; // Can't control YouTube progress
+    
     if (videoRef.current && duration) {
       const rect = e.currentTarget.getBoundingClientRect();
       const pos = (e.clientX - rect.left) / rect.width;
@@ -165,6 +173,8 @@ function DashboardVideoDetails() {
   };
 
   const handleVolumeChange = (e) => {
+    if (isYouTubeVideo) return; // Can't control YouTube volume
+    
     const newVolume = parseFloat(e.target.value);
     setVolume(newVolume);
     if (videoRef.current) {
@@ -196,7 +206,8 @@ function DashboardVideoDetails() {
     setActiveLesson(index);
     setIsPlaying(false);
     setCurrentTime(0);
-    setDuration(0); // Reset duration for new video
+    setDuration(0);
+    setIsLoading(true);
   };
 
   if (playlistLoading) {
@@ -228,20 +239,137 @@ function DashboardVideoDetails() {
             {/* Video Container */}
             <div ref={containerRef} className="rounded-lg mb-4">
               <div className="relative aspect-video bg-gray-900 group overflow-hidden rounded-lg">
-                {/* Video Element */}
-                {currentVideo?.video_file ? (
-                  <video
-                    ref={videoRef}
-                    // src={currentVideo.video_file}
-                    src={getVideoUrl(currentVideo.video_file)}
-                    className="w-full h-full object-cover"
-                    onTimeUpdate={handleTimeUpdate}
-                    onLoadedMetadata={handleLoadedMetadata}
-                    onCanPlay={() => setVideoError(null)} 
-                    onWaiting={() => setIsLoading(true)} 
-                    onPlaying={() => setIsLoading(false)}
-                    onClick={togglePlay}
+                {/* Loading Bar */}
+                {isLoading && !isYouTubeVideo && (
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gray-700 z-10">
+                    <div className="h-full bg-blue-600 animate-pulse" style={{ width: '100%' }}>
+                      <div className="h-full bg-gradient-to-r from-transparent via-blue-400 to-transparent animate-shimmer"></div>
+                    </div>
+                  </div>
+                )}
+
+                {/* YouTube Video */}
+                {isYouTubeVideo ? (
+                  <iframe
+                    src={getYouTubeEmbedUrl(currentVideo.yt_video_url)}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    onLoad={() => setIsLoading(false)}
                   />
+                ) : currentVideo?.video_file ? (
+                  <>
+                    {/* Regular Video */}
+                    <video
+                      ref={videoRef}
+                      src={getVideoUrl(currentVideo.video_file)}
+                      className="w-full h-full object-cover"
+                      onTimeUpdate={handleTimeUpdate}
+                      onLoadedMetadata={handleLoadedMetadata}
+                      onCanPlay={() => setIsLoading(false)}
+                      onWaiting={() => setIsLoading(true)}
+                      onPlaying={() => setIsLoading(false)}
+                      onClick={togglePlay}
+                    />
+
+                    {/* Play Button Overlay */}
+                    {!isPlaying && (
+                      <button
+                        onClick={togglePlay}
+                        className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors"
+                      >
+                        <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition-colors">
+                          <svg
+                            className="w-8 h-8 text-white ml-1"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M8 5v14l11-7z" />
+                          </svg>
+                        </div>
+                      </button>
+                    )}
+
+                    {/* Video Controls */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {/* Progress Bar */}
+                      <div
+                        className="w-full h-1 bg-white/30 rounded-full mb-3 cursor-pointer overflow-hidden"
+                        onClick={handleProgressClick}
+                      >
+                        <div
+                          className="h-full bg-blue-600 rounded-full transition-all"
+                          style={{
+                            width: `${(currentTime / duration) * 100 || 0}%`,
+                          }}
+                        />
+                      </div>
+
+                      {/* Control Buttons */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <button
+                            onClick={togglePlay}
+                            className="text-white hover:text-blue-400 transition-colors"
+                          >
+                            {isPlaying ? (
+                              <svg
+                                className="w-5 h-5"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+                              </svg>
+                            ) : (
+                              <svg
+                                className="w-5 h-5"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M8 5v14l11-7z" />
+                              </svg>
+                            )}
+                          </button>
+
+                          <span className="text-white text-sm">
+                            {formatTime(currentTime)} / {formatTime(duration)}
+                          </span>
+
+                          <div className="flex items-center gap-2">
+                            <svg
+                              className="w-5 h-5 text-white"
+                              fill="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" />
+                            </svg>
+                            <input
+                              type="range"
+                              min="0"
+                              max="1"
+                              step="0.1"
+                              value={volume}
+                              onChange={handleVolumeChange}
+                              className="w-20 h-1 bg-white/30 rounded-full appearance-none cursor-pointer"
+                            />
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={toggleFullscreen}
+                          className="text-white hover:text-blue-400 transition-colors"
+                        >
+                          <svg
+                            className="w-5 h-5"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </>
                 ) : (
                   <img
                     src={
@@ -252,106 +380,6 @@ function DashboardVideoDetails() {
                     className="w-full h-full object-cover"
                   />
                 )}
-
-                {/* Play Button Overlay */}
-                {!isPlaying && (
-                  <button
-                    onClick={togglePlay}
-                    className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors"
-                  >
-                    <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition-colors">
-                      <svg
-                        className="w-8 h-8 text-white ml-1"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
-                    </div>
-                  </button>
-                )}
-
-                {/* Video Controls */}
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                  {/* Progress Bar */}
-                  <div className="w-full h-1 bg-white/30 rounded-full mb-3 cursor-pointer overflow-hidden">
-                    <div
-                      className="h-full bg-blue-600 rounded-full transition-all"
-                      style={{
-                        width: `${(currentTime / duration) * 100 || 0}%`,
-                      }}
-                    />
-                  </div>
-
-                  {/* Control Buttons */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={togglePlay}
-                        className="text-white hover:text-blue-400 transition-colors"
-                      >
-                        {isPlaying ? (
-                          <svg
-                            className="w-5 h-5"
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
-                          </svg>
-                        ) : (
-                          <svg
-                            className="w-5 h-5"
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path d="M8 5v14l11-7z" />
-                          </svg>
-                        )}
-                      </button>
-
-                      {/* <span className="text-white text-sm">
-                        {formatTime(currentTime)} /{" "}
-                        {formatTime(duration || currentVideo?.duration || 0)}
-                      </span> */}
-
-                      <span className="text-white text-sm">
-                        {formatTime(currentTime)} / {formatTime(duration)}
-                      </span>
-
-                      <div className="flex items-center gap-2">
-                        <svg
-                          className="w-5 h-5 text-white"
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" />
-                        </svg>
-                        <input
-                          type="range"
-                          min="0"
-                          max="1"
-                          step="0.1"
-                          value={volume}
-                          onChange={handleVolumeChange}
-                          className="w-20 h-1 bg-white/30 rounded-full appearance-none cursor-pointer"
-                        />
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={toggleFullscreen}
-                      className="text-white hover:text-blue-400 transition-colors"
-                    >
-                      <svg
-                        className="w-5 h-5"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -366,9 +394,6 @@ function DashboardVideoDetails() {
                     {playlistData?.description || playlistData?.topic_name}
                   </p>
                 </div>
-                {/* <button className="px-4 py-1.5 text-sm font-medium text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 transition-colors">
-                  Follow
-                </button> */}
               </div>
 
               {/* Stats */}
@@ -378,8 +403,6 @@ function DashboardVideoDetails() {
               </div>
             </div>
           </div>
-
-          {/* Right Side - Video List */}
 
           {/* Right Side - Video List */}
           <div className="lg:col-span-1">
@@ -422,11 +445,18 @@ function DashboardVideoDetails() {
                             "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1759812746/day-picture-id1163588010_xjbdnc.jpg";
                         }}
                       />
-                      <VideoDurationBadge
-                        videoUrl={getVideoUrl(video.video_file)}
-                        videoFile={video.video_file}
-                        backendDuration={video.duration}
-                      />
+                      {video.source_type !== "youtube" && (
+                        <VideoDurationBadge
+                          videoUrl={getVideoUrl(video.video_file)}
+                          videoFile={video.video_file}
+                          backendDuration={video.duration}
+                        />
+                      )}
+                      {video.source_type === "youtube" && (
+                        <span className="absolute bottom-1 right-1 bg-red-600 text-white text-xs px-1 rounded">
+                          YouTube
+                        </span>
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="text-sm font-medium text-gray-900 line-clamp-2 mb-1">
@@ -505,6 +535,21 @@ function DashboardVideoDetails() {
           )}
         </div>
       </div>
+
+      {/* CSS for shimmer animation */}
+      <style>{`
+        @keyframes shimmer {
+          0% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(100%);
+          }
+        }
+        .animate-shimmer {
+          animation: shimmer 1.5s infinite;
+        }
+      `}</style>
     </div>
   );
 }
