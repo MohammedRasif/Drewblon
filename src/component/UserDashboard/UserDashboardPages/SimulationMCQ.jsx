@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { IoClose, IoCheckmarkCircle } from "react-icons/io5";
+import { IoClose, IoCheckmarkCircle, IoWarning } from "react-icons/io5";
 import {
   useShowSimulationCategoryAllQuestionQuery,
   useSimulationQuestionSubmitMutation,
@@ -10,7 +10,7 @@ import {
 function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
-  const [answers, setAnswers] = useState([]); // collected answers to submit
+  const [answers, setAnswers] = useState([]); 
   const [submissionResult, setSubmissionResult] = useState(null);
   const [quizCompleted, setQuizCompleted] = useState(false);
 
@@ -26,12 +26,13 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
   );
 
   const [submitMCQ, { isLoading: isSubmitting }] = useSimulationQuestionSubmitMutation();
-
   const questions = questionsData?.questions || [];
   const isCompleted = questionsData?.is_completed === true;
 
-  const isReviewMode = isCompleted || 
-    (questions.length > 0 && questions.every(q => q.student_answer !== null && q.student_answer !== undefined));
+  // Review mode: fully completed (all correct)
+  const isFullReviewMode = isCompleted && 
+    questions.length > 0 && 
+    questions.every(q => q.student_answer?.is_correct === true);
 
   useEffect(() => {
     if (isOpen) {
@@ -44,15 +45,24 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
   }, [isOpen]);
 
   const handleAnswerSelect = (option) => {
-    if (!isReviewMode) {
+    const currentQ = questions[currentQuestion];
+    const hasCorrectAnswer = currentQ.student_answer?.is_correct === true;
+    
+    if (!hasCorrectAnswer && !isFullReviewMode) {
       setSelectedAnswer(option);
     }
   };
 
-  const handleSubmit = () => {
-    if (selectedAnswer === null || isReviewMode) return;
+ 
 
+
+  const handleSubmit = () => {
+    if (selectedAnswer === null) return;
+    
     const currentQ = questions[currentQuestion];
+    const hasCorrectAnswer = currentQ.student_answer?.is_correct === true;
+    
+    if (hasCorrectAnswer || isFullReviewMode) return;
 
     setAnswers((prev) => [
       ...prev,
@@ -99,6 +109,7 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
   const handleNext = () => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
+      setSelectedAnswer(null);
     } else {
       onClose();
     }
@@ -141,7 +152,7 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
     );
   }
 
-  if (quizCompleted && submissionResult && !isReviewMode) {
+  if (quizCompleted && submissionResult) {
     return (
       <div className="fixed inset-0 bg-black/5 backdrop-blur-[2px] bg-opacity-50 flex items-center justify-center z-50 p-4">
         <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -192,13 +203,13 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
     { label: "D", text: currentQ.option_d },
   ];
 
-  let selectedOption = null;
-  let isCorrect = false;
+  // Check if this question was already answered
+  const hasStudentAnswer = currentQ.student_answer !== null && currentQ.student_answer !== undefined;
+  const wasAnswerCorrect = hasStudentAnswer && currentQ.student_answer.is_correct;
+  const previousAnswer = hasStudentAnswer ? currentQ.student_answer.selected_option : null;
 
-  if (isReviewMode && currentQ.student_answer) {
-    selectedOption = currentQ.student_answer.selected_option;
-    isCorrect = currentQ.student_answer.is_correct;
-  }
+  // Determine if user needs to retry this question
+  const needsRetry = hasStudentAnswer && !wasAnswerCorrect;
 
   return (
     <div className="fixed inset-0 bg-black/5 backdrop-blur-[2px] bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -206,7 +217,7 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">
-            {isReviewMode ? "Review " : ""}Question {currentQuestion + 1} of {questions.length}
+            Question {currentQuestion + 1} of {questions.length}
           </h2>
           <button
             onClick={onClose}
@@ -238,31 +249,74 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
         </div>
 
         <div className="p-6 space-y-6">
+          {/* Warning message for wrong answers */}
+          {needsRetry && (
+            <div className="bg-orange-50 border-2 border-orange-200 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <IoWarning className="w-6 h-6 text-orange-600 flex-shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="font-semibold text-orange-700 mb-1">
+                    Your previous answer was incorrect
+                  </p>
+                  <p className="text-gray-700 text-sm">
+                    Please select the correct answer and submit again.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Success message for correct answers */}
+          {wasAnswerCorrect && (
+            <div className="bg-green-50 border-2 border-green-200 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <IoCheckmarkCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="font-semibold text-green-700 mb-1">
+                    Correct Answer!
+                  </p>
+                  <p className="text-gray-700 text-sm">
+                    You've already answered this question correctly.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Question Text */}
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-4">
+              {currentQ.text}
+            </h3>
+          </div>
+
           {/* Options */}
           <div className="space-y-3">
             {options.map((option) => {
-              const isSelected =
-                isReviewMode
-                  ? option.label === selectedOption
-                  : option.label === selectedAnswer;
-
-              const isCorrectOption = option.label === currentQ.correct_option;
+              const isSelected = option.label === selectedAnswer;
+              const isPreviousCorrectAnswer = wasAnswerCorrect && option.label === previousAnswer;
 
               let borderColor = "border-gray-200";
-              let bgColor = "bg-gray-50 hover:border-gray-300";
+              let bgColor = "bg-gray-50";
               let textColor = "text-gray-700";
+              let cursorStyle = "cursor-pointer hover:border-gray-300";
 
-              if (isReviewMode) {
-                if (isCorrectOption) {
-                  borderColor = "border-green-500";
-                  bgColor = "bg-green-50";
-                  textColor = "text-green-700 font-medium";
-                } else if (isSelected && !isCorrect) {
-                  borderColor = "border-red-500";
-                  bgColor = "bg-red-50";
-                  textColor = "text-red-700 font-medium";
-                }
-              } else if (isSelected) {
+              // If this was the correct answer previously, show it as green and locked
+              if (isPreviousCorrectAnswer) {
+                borderColor = "border-green-500";
+                bgColor = "bg-green-50";
+                textColor = "text-green-700 font-medium";
+                cursorStyle = "cursor-not-allowed";
+              } 
+              // If in full review mode, show all correct answers
+              else if (isFullReviewMode && option.label === currentQ.correct_option) {
+                borderColor = "border-green-500";
+                bgColor = "bg-green-50";
+                textColor = "text-green-700 font-medium";
+                cursorStyle = "cursor-not-allowed";
+              }
+              // Allow selection for retry or new questions
+              else if (isSelected && !wasAnswerCorrect) {
                 borderColor = "border-blue-500";
                 bgColor = "bg-blue-50";
               }
@@ -270,23 +324,22 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
               return (
                 <label
                   key={option.label}
-                  className={`flex items-start gap-3 p-4 rounded-lg border-2 transition-all cursor-pointer ${borderColor} ${bgColor}`}
+                  className={`flex items-start gap-3 p-4 rounded-lg border-2 transition-all ${borderColor} ${bgColor} ${cursorStyle}`}
                   onClick={() => handleAnswerSelect(option.label)}
                 >
-                  {!isReviewMode && (
+                  {!wasAnswerCorrect && !isFullReviewMode && (
                     <input
                       type="radio"
                       name="answer"
                       checked={isSelected}
                       onChange={() => handleAnswerSelect(option.label)}
                       className="mt-1 w-4 h-4 text-blue-600"
-                      disabled={false}
                     />
                   )}
 
                   <span className={`flex-1 ${textColor}`}>{option.text}</span>
 
-                  {isReviewMode && isCorrectOption && (
+                  {(isPreviousCorrectAnswer || (isFullReviewMode && option.label === currentQ.correct_option)) && (
                     <IoCheckmarkCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
                   )}
                 </label>
@@ -294,25 +347,29 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
             })}
           </div>
 
-          {/* Explanation - only in review mode */}
-          {isReviewMode && currentQ.explanation && (
-            <div className="bg-green-50 border-2 border-green-200 rounded-lg p-4">
+          {/* Explanation - only show for correct answers or in full review mode */}
+          {/* {(wasAnswerCorrect || isFullReviewMode) && currentQ.explanation && (
+            <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
               <div className="flex items-start gap-2">
-                <IoCheckmarkCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />
+                <div className="w-6 h-6 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-green-700 mb-1">
-                    Correct Answer: {currentQ.correct_option}
+                  <p className="font-semibold text-blue-700 mb-1">
+                    Explanation
                   </p>
-                  {/* <p className="text-gray-700 text-sm">{currentQ.explanation}</p> */}
+                  <p className="text-gray-700 text-sm">{currentQ.explanation}</p>
                 </div>
               </div>
             </div>
-          )}
+          )} */}
         </div>
 
         {/* Footer */}
         <div className="p-6 border-t border-gray-200 flex justify-end">
-          {isReviewMode ? (
+          {wasAnswerCorrect || isFullReviewMode ? (
             <button
               onClick={handleNext}
               className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
@@ -329,7 +386,11 @@ function SimulationMCQ({ isOpen, onClose, selectedLevel, categoryId, taskId }) {
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
               }`}
             >
-              {isSubmitting ? "Submitting..." : "Submit"}
+              {isSubmitting 
+                ? "Submitting..." 
+                : needsRetry 
+                  ? "Resubmit" 
+                  : "Submit"}
             </button>
           )}
         </div>

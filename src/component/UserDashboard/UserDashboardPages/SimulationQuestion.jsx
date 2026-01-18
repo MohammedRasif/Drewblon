@@ -101,7 +101,7 @@ function SimulationQuestion() {
         {levels.map((level) => (
           <div
             key={level.id}
-            className="bg-[#F5F5F5] rounded-lg p-6 hover:shadow-md transition-shadow cursor-pointer"
+            className=""
             onClick={() => handleCardClick(level.id)}
           >
             <div className="flex flex-col items-center justify-center min-h-[140px]">

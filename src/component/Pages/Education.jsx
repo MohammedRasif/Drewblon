@@ -13,7 +13,6 @@ function Education() {
         <img src={image} alt="" />
       </div>
 
-      {/* Quote Text */}
       <p className="text-[24px] text-gray-700 mb-8 font-medium text-start">
         {quote}
       </p>
@@ -22,7 +21,6 @@ function Education() {
       <div className="flex items-center">
         {/* Avatar */}
         <img
-          // Note: You must update the 'ryanHolmesAvatar' path to your actual image path
           src="https://res.cloudinary.com/dfsu0cuvb/image/upload/v1737529177/samples/look-up.jpg"
           alt={`${name}'s avatar`}
           className="w-12 h-12 rounded-full mr-4 object-cover"

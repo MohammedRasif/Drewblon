@@ -72,7 +72,7 @@ const Dashboard = () => {
     <div className=" pr-5 pb-8">
       <div className="container mx-auto space-y-6">
         {/* Overview Section */}
-        <div className=" rounded-lg  ">
+        <div className=" rounded-lg lg:pl-0 pl-5 ">
           <h2 className="text-[24px] font-bold text-gray-800 mb-4">Overview</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
             {overviewStats.map((stat, index) => (
