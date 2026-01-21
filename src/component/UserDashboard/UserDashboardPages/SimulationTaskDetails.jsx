@@ -1,13 +1,19 @@
 "use client";
 import { IoChevronBack } from "react-icons/io5";
+import { MdDownload } from "react-icons/md";
 import { NavLink, useParams } from "react-router-dom";
-import { useShowSimulationCategoryQuery } from "../../../redux/features/baseApi";
+import {
+  useShowSimulationCategoryQuery,
+  useShowVRFileQuery,
+} from "../../../redux/features/baseApi";
 import { useEffect } from "react";
 
 function SimulationTaskDetails() {
   const { id } = useParams();
   const { data: categoryData, isLoading } = useShowSimulationCategoryQuery(id);
-
+  const { data: vrFileData, isError: vrFileError } = useShowVRFileQuery(id);
+  const defaultCover =
+    "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1751196563/b170870007dfa419295d949814474ab2_t_qm2pcq.jpg";
   // Store task_id in localStorage when data is fetched
   useEffect(() => {
     if (categoryData?.task_id) {
@@ -34,7 +40,10 @@ function SimulationTaskDetails() {
         <div className="w-[50vh] h-56 bg-gray-200 animate-pulse rounded-2xl mb-8" />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-48 bg-gray-200 animate-pulse rounded-xl" />
+            <div
+              key={i}
+              className="h-48 bg-gray-200 animate-pulse rounded-xl"
+            />
           ))}
         </div>
       </div>
@@ -43,28 +52,30 @@ function SimulationTaskDetails() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      {/* Header */}
-      <div className="mb-6 flex items-center gap-3">
-        <button
-          onClick={handleBack}
-          className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-gray-200 transition-colors"
-        >
-          <IoChevronBack className="w-5 h-5 text-gray-700" />
-        </button>
-        <h1 className="text-2xl font-semibold text-gray-900">
-          {categoryData?.task_name}
-        </h1>
+      {/* Header with VR File Card */}
+      <div className="mb-6 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleBack}
+            className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-gray-200 transition-colors"
+          >
+            <IoChevronBack className="w-5 h-5 text-gray-700" />
+          </button>
+          <h1 className="text-2xl font-semibold text-gray-900">
+            {categoryData?.task_name}
+          </h1>
+        </div>
+
+        {/* VR File Card */}
+        
       </div>
 
       {/* Hero Card */}
-      <div className="mb-8">
+      <div className="mb-8 flex justify-between">
         <div className="relative w-[50vh] h-56 rounded-2xl overflow-hidden group cursor-pointer">
           <img
-            src={
-              categoryData?.task_cover_image ||
-              "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1751196563/b170870007dfa419295d949814474ab2_t_qm2pcq.jpg"
-            }
-            alt={categoryData?.task_name}
+            src={categoryData?.task_cover_image || defaultCover}
+            alt={categoryData?.task_name || "Simulation cover"}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t bg-black/40 via-black/20 to-transparent" />
@@ -115,6 +126,29 @@ function SimulationTaskDetails() {
             </h2>
           </div>
         </div>
+
+        <div className="">
+          {vrFileData && !vrFileError && (
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 flex items-center gap-3 ">
+              <div className="">
+                <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">
+                  VR File
+                </p>
+                <p className="text-sm font-semibold text-gray-900 mt-1">
+                  {vrFileData.filename}
+                </p>
+              </div>
+              <a
+                href={vrFileData.download_url}
+                download={vrFileData.filename}
+                className="flex items-center justify-center w-10 h-10 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors text-white"
+                title="Download VR file"
+              >
+                <MdDownload className="w-5 h-5" />
+              </a>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Category Section */}
@@ -131,11 +165,8 @@ function SimulationTaskDetails() {
             >
               <div className="relative h-46 rounded-xl overflow-hidden group cursor-pointer">
                 <img
-                  src={
-                    subcategory.cover_image ||
-                    "https://res.cloudinary.com/dfsu0cuvb/image/upload/v1751196563/b170870007dfa419295d949814474ab2_t_qm2pcq.jpg"
-                  }
-                  alt={subcategory.name}
+                  src={categoryData?.task_cover_image || defaultCover}
+                  alt={categoryData?.task_name || "Simulation cover"}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />

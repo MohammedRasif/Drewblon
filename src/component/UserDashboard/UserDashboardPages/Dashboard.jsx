@@ -2,21 +2,21 @@ import { FaVideo } from "react-icons/fa";
 import { MdAccessTimeFilled } from "react-icons/md";
 import { NavLink } from "react-router-dom";
 import { useShowProfileInformationQuery, useShowProfileLeaderBoradQuery, useShowProfileOverViewQuery } from "../../../redux/features/baseApi";
-
+ 
 const Dashboard = () => {
-
+ 
   const {data: showProfileOverview} = useShowProfileOverViewQuery()
   console.log(showProfileOverview)
   const {data: showProfileInfromation} = useShowProfileInformationQuery()
   console.log(showProfileInfromation)
   const {data: shwoProfileLeaderBoard} = useShowProfileLeaderBoradQuery()
   console.log(shwoProfileLeaderBoard)
-
+ 
   const stats = showProfileOverview?.stats || {};
   const userInfo = showProfileInfromation?.user || {};
   const leaderboardRankings = shwoProfileLeaderBoard?.rankings || [];
   const currentUserRank = shwoProfileLeaderBoard?.current_user_rank || 0;
-
+ 
   const overviewStats = [
     {
       label: "Learning time",
@@ -47,13 +47,13 @@ const Dashboard = () => {
       icon: "🏆",
     },
   ];
-
+ 
   const baseUrl = "https://1waymirror.com/backend"
   const careerInterests = userInfo.career_interest || [];
-  
+ 
   const extracurricularActivities = userInfo.extracurricular_activities || [];
   console.log({extracurricularActivities})
-
+ 
   const getTagColor = (index) => {
     const colors = [
       "bg-green-100 text-green-700",
@@ -64,10 +64,30 @@ const Dashboard = () => {
     ];
     return colors[index % colors.length];
   };
-
+ 
   // Top 3 leaders from API
   const top3Leaders = leaderboardRankings.slice(0, 3);
-
+ 
+  // Prepare leaderboard data: Top 10 + current user if not in top 10
+  const getLeaderboardData = () => {
+    const top10 = leaderboardRankings.slice(0, 10);
+   
+    // Check if current user is in top 10
+    const isCurrentUserInTop10 = top10.some(leader => leader.rank === currentUserRank);
+   
+    // If user is not in top 10, find them and add them after top 10
+    if (!isCurrentUserInTop10 && currentUserRank > 0) {
+      const currentUser = leaderboardRankings.find(leader => leader.rank === currentUserRank);
+      if (currentUser) {
+        return [...top10, currentUser];
+      }
+    }
+   
+    return top10;
+  };
+ 
+  const leaderboardDisplay = getLeaderboardData();
+ 
   return (
     <div className=" pr-5 pb-8">
       <div className="container mx-auto space-y-6">
@@ -99,7 +119,7 @@ const Dashboard = () => {
             ))}
           </div>
         </div>
-
+ 
         {/* Profile Information Section */}
         <h2 className="text-[24px] font-bold text-gray-800 mb-4">
           Profile Information
@@ -122,7 +142,7 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-
+ 
           <div className="space-y-4">
             <div>
               <p className=" font-medium text-gray-700 mb-1">School</p>
@@ -130,21 +150,21 @@ const Dashboard = () => {
                 {userInfo.educational_institution?.name || "Not specified"} - {userInfo.state || "N/A"}
               </p>
             </div>
-
+ 
             <div>
               <p className=" font-medium text-gray-700 mb-1">Grade</p>
               <p className=" text-gray-900 font-semibold">
                 {userInfo.grade || "Not specified"}
               </p>
             </div>
-
+ 
             <div>
               <p className=" font-medium text-gray-700 mb-1">Passing Year</p>
               <p className=" text-gray-900 font-semibold">
                 {userInfo.passing_year || "Not specified"}
               </p>
             </div>
-
+ 
             {careerInterests.length > 0 && (
               <div>
                 <p className=" font-medium text-gray-700 mb-2">
@@ -162,7 +182,7 @@ const Dashboard = () => {
                 </div>
               </div>
             )}
-
+ 
             {extracurricularActivities.length > 0 && (
               <div>
                 <p className=" font-medium text-gray-700 mb-2">
@@ -182,13 +202,13 @@ const Dashboard = () => {
             )}
           </div>
         </div>
-
+ 
         {/* Leader board Section */}
         <div className="">
           <h2 className="text-[20px] font-bold text-gray-900 mb-6">
             Leader board
           </h2>
-
+ 
           {/* Top 3 Leaders */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             {top3Leaders.map((leader, index) => (
@@ -214,7 +234,7 @@ const Dashboard = () => {
               </div>
             ))}
           </div>
-
+ 
           {/* Leaderboard Table */}
           <div className="overflow-x-auto rounded-xl">
             <table className="w-full ">
@@ -241,49 +261,52 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {leaderboardRankings.map((row, index) => (
-                  <tr 
-                    key={index} 
-                    className={`bg-white ${row.rank === currentUserRank ? 'bg-blue-50' : ''}`}
-                  >
-                    <td className="py-3 px-4 text-sm text-gray-900">
-                      {row.rank}
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
-                          <span className="text-xs font-medium text-gray-600">
-                            {row.name?.charAt(0) || "?"}
+                {leaderboardDisplay.map((row, index) => {
+                  const isCurrentUser = row.rank === currentUserRank;
+                  return (
+                    <tr
+                      key={index}
+                      className={`${isCurrentUser ? 'bg-blue-200 font-bold' : 'bg-white'} ${index === 10 ? 'border-t-2 border-gray-300' : ''}`}
+                    >
+                      <td className="py-3 px-4 text-sm text-gray-900">
+                        {row.rank}
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
+                            <span className="text-xs font-medium text-gray-600">
+                              {row.name?.charAt(0) || "?"}
+                            </span>
+                          </div>
+                          <span className="text-sm font-medium text-gray-900">
+                            {row.name || "Anonymous"} {isCurrentUser ? '(You)' : ''}
                           </span>
                         </div>
-                        <span className="text-sm font-medium text-gray-900">
-                          {row.name || "Anonymous"}
-                        </span>
-                      </div>
-                    </td>
-                    {/* <td className="py-3 px-4 text-sm text-gray-600">
-                      {row.state || "N/A"}
-                    </td> */}
-                    {/* <td className="py-3 px-4 text-sm text-gray-600">
-                      <div className="flex items-center space-x-2">
-                        <MdAccessTimeFilled />
-                        <span>{row.learning_time}</span>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 text-sm text-gray-600">
-                      <div className="flex items-center space-x-2">
-                        <FaVideo />
-                        <span>{row.completed_video} videos</span>
-                      </div>
-                    </td> */}
-                    <td className="py-3 px-4 text-sm text-gray-600">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
-                        <span>{row.total_point}</span>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      {/* <td className="py-3 px-4 text-sm text-gray-600">
+                        {row.state || "N/A"}
+                      </td> */}
+                      {/* <td className="py-3 px-4 text-sm text-gray-600">
+                        <div className="flex items-center space-x-2">
+                          <MdAccessTimeFilled />
+                          <span>{row.learning_time}</span>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-600">
+                        <div className="flex items-center space-x-2">
+                          <FaVideo />
+                          <span>{row.completed_video} videos</span>
+                        </div>
+                      </td> */}
+                      <td className="py-3 px-4 text-sm text-gray-600">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
+                          <span>{row.total_point}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -292,5 +315,5 @@ const Dashboard = () => {
     </div>
   );
 };
-
+ 
 export default Dashboard;

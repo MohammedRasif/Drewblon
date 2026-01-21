@@ -2,20 +2,19 @@
 
 import { useState, useRef, useEffect } from "react";
 import { GoChevronDown } from "react-icons/go";
-import { IoNotificationsOutline } from "react-icons/io5";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom"; // ← useNavigate যোগ করা হয়েছে
 import { useShowProfileInformationQuery } from "../../../redux/features/baseApi";
 
 const UserDashboardNavbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate(); // ← এটা যোগ করো
+
   const {
     data: profileInfo,
     isLoading,
-    refetch,
+    // refetch, // যদি দরকার না হয় তাহলে কমেন্ট করে রাখতে পারো
   } = useShowProfileInformationQuery();
-  console.log(profileInfo);
-  const BASE_URL = "https://1waymirror.com/backend";
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -30,10 +29,18 @@ const UserDashboardNavbar = () => {
   }, []);
 
   const handleLogout = () => {
+    // টোকেন গুলো মুছে ফেলা
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
-    setIsProfileOpen(false);
+    
+    // ড্রপডাউন বন্ধ করা
+    setIsDropdownOpen(false);
+    
+    // লগইন পেজে নিয়ে যাওয়া
     navigate("/login");
+    
+    // অপশনাল: পেজ রিফ্রেশ করতে চাইলে (কিছু ক্ষেত্রে দরকার হয়)
+    // window.location.href = "/login";
   };
 
   const toggleDropdown = () => {
@@ -41,7 +48,7 @@ const UserDashboardNavbar = () => {
   };
 
   return (
-    <div className="flex items-center justify-end py-[7px] gap-6  w-full  pr-10">
+    <div className="flex items-center justify-end py-[7px] gap-6 w-full pr-10">
       {/* User Profile Dropdown */}
       <div className="relative" ref={dropdownRef}>
         <div
@@ -75,17 +82,15 @@ const UserDashboardNavbar = () => {
             <div className="py-2">
               <NavLink to="/dashboard/EditProfile">
                 <button
-                  className="w-full text-left px-4 py-2 text-gray-700 font-semibold hover:bg-gray-50 transition-colors cursor-pointer"
-                  onClick={() => {
-                    setIsDropdownOpen(false);
-                    // Add settings functionality here
-                  }}
+                  className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+                  onClick={() => setIsDropdownOpen(false)}
                 >
                   Settings
                 </button>
               </NavLink>
+
               <button
-                className="w-full text-left px-4 py-2 text-gray-700 font-semibold hover:bg-gray-50 transition-colors cursor-pointer"
+                className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 font-semibold transition-colors cursor-pointer"
                 onClick={handleLogout}
               >
                 Logout

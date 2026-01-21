@@ -162,6 +162,11 @@ export const baseApi = createApi({
 
     showSuggestedVide:builder.query({
       query: (id) =>`/videos/playlists/${id}/suggested/`
+    }),
+
+    showVRFile: builder.query({
+      query: (id) => `/simulation/vr-file/${id}/`,
+      providesTags: ["simulation"],
     })
 
 
@@ -209,4 +214,6 @@ export const {
   useShowVideoTopicDataQuery,
   useShowAllVideoDetailsQuery,
   useShowSuggestedVideQuery,
+  useShowVRFileQuery,
+
 } = baseApi;
