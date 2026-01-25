@@ -9,6 +9,8 @@ function DashbaordProfile({ user, updateProfile, isUpdating }) {
     passing_year: "",
     educational_institution: "",
     email: "",
+    gpa: "",
+    sat_score: "",
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -33,6 +35,8 @@ function DashbaordProfile({ user, updateProfile, isUpdating }) {
         passing_year: user.passing_year || "",
         educational_institution: user.educational_institution?.name || "",
         email: user.email || "",
+        gpa: user.gpa || "",
+        sat_score: user.sat_score || "",
       });
 
       const existingPic = user.profile_picture;
@@ -94,6 +98,14 @@ function DashbaordProfile({ user, updateProfile, isUpdating }) {
       formData.passing_year !== (user?.passing_year?.toString() || "")
     ) {
       profileFormData.append("passing_year", formData.passing_year);
+    }
+
+    if (formData.gpa && formData.gpa !== (user?.gpa || "")) {
+      profileFormData.append("gpa", formData.gpa);
+    }
+
+    if (formData.sat_score && formData.sat_score !== (user?.sat_score || "")) {
+      profileFormData.append("sat_score", formData.sat_score);
     }
 
     if (profilePicture === "DELETE") {
@@ -280,6 +292,35 @@ function DashbaordProfile({ user, updateProfile, isUpdating }) {
             <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
               <IoMdCheckmarkCircleOutline size={24} className="text-green-600" />
             </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-[14px] font-medium text-gray-700 mb-2">
+              GPA
+            </label>
+            <input
+              type="text"
+              name="gpa"
+              value={formData.gpa}
+              onChange={handleInputChange}
+              placeholder="e.g. 3.8"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-[14px] font-medium text-gray-700 mb-2">
+              SAT Score
+            </label>
+            <input
+              type="text"
+              name="sat_score"
+              value={formData.sat_score}
+              onChange={handleInputChange}
+              placeholder="e.g. 1500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
         </div>
 

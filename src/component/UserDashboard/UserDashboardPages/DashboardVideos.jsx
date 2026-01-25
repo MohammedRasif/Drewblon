@@ -5,12 +5,14 @@ import { Link, useParams } from "react-router-dom";
 import {
   useShowVideoTopicDataQuery,
   useShowVideoTopicQuery,
+  useShowVideoAllPlaylistsQuery,
+  useShowVideoPlaylistsByTopicQuery,
 } from "../../../redux/features/baseApi";
 
 function DashboardVideos() {
   const { id } = useParams(); 
   const [activeCategory, setActiveCategory] = useState("All topics");
-  const [selectedTopicId, setSelectedTopicId] = useState();
+  const [selectedTopicId, setSelectedTopicId] = useState(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState();
   const baseUrl = "https://1waymirror.com/backend"
   const {
@@ -24,6 +26,20 @@ function DashboardVideos() {
     isLoading: topicLoading,
     error: topicError,
   } = useShowVideoTopicDataQuery(id);
+
+  // Query for all playlists in the category
+  const {
+    data: allPlaylists,
+    isLoading: allPlaylistsLoading,
+  } = useShowVideoAllPlaylistsQuery(id);
+
+  // Query for topic-filtered playlists
+  const {
+    data: topicPlaylists,
+    isLoading: topicPlaylistsLoading,
+  } = useShowVideoPlaylistsByTopicQuery(selectedTopicId, {
+    skip: !selectedTopicId, // Skip query if no topic is selected
+  });
 
   const categories = useMemo(() => {
     const cats = ["All topics"];
@@ -57,19 +73,17 @@ function DashboardVideos() {
 
   // Get playlists to display
   const getPlaylists = () => {
-  if (activeCategory === "All topics") {
-    if (!videoTopic?.topics) return [];
-
-    return videoTopic.topics.flatMap(
-      (topic) => topic.playlists || []
-    );
-  }
-  if (!videoTopic?.topics) return [];
-  const selectedTopic = videoTopic.topics.find(
-    (t) => t.name === activeCategory
-  );
-  return selectedTopic?.playlists || [];
-};
+    if (activeCategory === "All topics") {
+      // Return all playlists for the category
+      if (!allPlaylists?.results) return [];
+      return allPlaylists.results || [];
+    }
+    // When a specific topic is selected, use the topic-filtered playlists from API
+    if (selectedTopicId && topicPlaylists?.results) {
+      return topicPlaylists.results;
+    }
+    return [];
+  };
 
 
   const playlists = getPlaylists();
@@ -157,12 +171,13 @@ function DashboardVideos() {
       </div>
 
       {/* Loading state for topic data */}
-      {topicLoading && selectedTopicId && (
+      {((topicLoading || allPlaylistsLoading) && activeCategory === "All topics") ||
+        ((topicPlaylistsLoading) && selectedTopicId) ? (
         <div className="text-center py-12">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mx-auto mb-3"></div>
           <p className="text-gray-600">Loading playlists...</p>
         </div>
-      )}
+      ) : null}
 
       {/* Error state for topic data */}
       {topicError && selectedTopicId && (
@@ -172,7 +187,7 @@ function DashboardVideos() {
       )}
 
       {/* New Section */}
-      {!topicLoading && newPlaylists.length > 0 && (
+      {!allPlaylistsLoading && !topicPlaylistsLoading && !topicLoading && newPlaylists.length > 0 && (
         <div className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-800">New</h2>
@@ -217,7 +232,7 @@ function DashboardVideos() {
       )}
 
       {/* Popular Section */}
-      {!topicLoading && popularPlaylists.length > 0 && (
+      {!topicLoading && !topicPlaylistsLoading && !allPlaylistsLoading && popularPlaylists.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-800">Popular</h2>
@@ -265,6 +280,8 @@ function DashboardVideos() {
 
       {/* Empty state */}
       {!topicLoading &&
+        !topicPlaylistsLoading &&
+        !allPlaylistsLoading &&
         !categoryLoading &&
         playlists.length === 0 &&
         activeCategory !== "All topics" && (

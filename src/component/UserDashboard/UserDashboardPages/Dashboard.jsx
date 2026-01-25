@@ -165,6 +165,24 @@ const Dashboard = () => {
               </p>
             </div>
  
+            {userInfo.gpa && (
+              <div>
+                <p className=" font-medium text-gray-700 mb-1">GPA</p>
+                <p className=" text-gray-900 font-semibold">
+                  {userInfo.gpa}
+                </p>
+              </div>
+            )}
+ 
+            {userInfo.sat_score && (
+              <div>
+                <p className=" font-medium text-gray-700 mb-1">SAT Score</p>
+                <p className=" text-gray-900 font-semibold">
+                  {userInfo.sat_score}
+                </p>
+              </div>
+            )}
+ 
             {careerInterests.length > 0 && (
               <div>
                 <p className=" font-medium text-gray-700 mb-2">

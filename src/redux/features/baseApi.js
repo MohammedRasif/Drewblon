@@ -102,6 +102,15 @@ export const baseApi = createApi({
       })
     }),
 
+    // contact us
+    contactUs: builder.mutation({
+      query: (data) => ({
+        url: "/contact-us/",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
     showSimulation: builder.query({
       query: () => "/tasks/",
       providesTags: ["simulation"],
@@ -156,6 +165,14 @@ export const baseApi = createApi({
       query:(id) =>`/videos/categories/${id}/playlists/`
     }),
 
+    showVideoAllPlaylists: builder.query({
+      query:(categoryId) =>`/videos/playlists/?category=${categoryId}`
+    }),
+
+    showVideoPlaylistsByTopic: builder.query({
+      query:(topicId) =>`/videos/playlists/?topic=${topicId}`
+    }),
+
     showAllVideoDetails:builder.query({
       query:(id) =>`/videos/playlists/${id}/`
     }),
@@ -198,6 +215,7 @@ export const {
   useCencelBookingUpCommingLiveStrimMutation,
   useUpdateProfileInpormationMutation,
   useUpdatePasswordMutation,
+  useContactUsMutation,
 
   useShowSimulationQuery,
   useShowSimulationCategoryQuery,
@@ -212,6 +230,8 @@ export const {
   useShowVideoCategoryQuery,
   useShowVideoTopicQuery,
   useShowVideoTopicDataQuery,
+  useShowVideoAllPlaylistsQuery,
+  useShowVideoPlaylistsByTopicQuery,
   useShowAllVideoDetailsQuery,
   useShowSuggestedVideQuery,
   useShowVRFileQuery,
