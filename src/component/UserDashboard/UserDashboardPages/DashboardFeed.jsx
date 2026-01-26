@@ -9,6 +9,8 @@ import {
 function DashboardFeed() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All categories");
+  const [showAll, setShowAll] = useState(false);
+
   const [likedPosts, setLikedPosts] = useState(new Set());
   const [savedPosts, setSavedPosts] = useState(new Set());
   const [expandedComments, setExpandedComments] = useState(new Set());
@@ -19,6 +21,7 @@ function DashboardFeed() {
     useShowListFeedDataQuery();
   const { data: feedResponse = {}, isLoading: postLoading } =
     useShowFeedDataQuery();
+  const VISIBLE_COUNT = 10;
 
   const categories = useMemo(() => {
     const categoryList = categoryData?.results || [];
@@ -138,6 +141,10 @@ function DashboardFeed() {
     );
   }
 
+  const visibleCategories = showAll
+    ? categories
+    : categories.slice(0, VISIBLE_COUNT);
+
   return (
     <div className="bg-gray-50 pr-5 pb-10 min-h-screen">
       <div className="container mx-auto ">
@@ -167,20 +174,34 @@ function DashboardFeed() {
 
         {/* Category Filters */}
         <div className="mb-8 overflow-x-auto pb-2">
-          <div className="flex flex-wrap gap-3">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
-                  selectedCategory === category
-                    ? "bg-blue-600 text-white shadow-md"
-                    : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
-                }`}
-              >
-                {category}
-              </button>
-            ))}
+          <div className="flex  justify-between">
+            <div className="flex flex-wrap gap-3">
+              {visibleCategories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                    selectedCategory === category
+                      ? "bg-blue-600 text-white shadow-md"
+                      : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+
+            <div>
+              {/* See All Button */}
+              {categories.length > VISIBLE_COUNT && (
+                <button
+                  onClick={() => setShowAll(!showAll)}
+                  className="rounded-full cursor-pointer text-sm font-medium text-blue-600 whitespace-nowrap"
+                >
+                  {showAll ? "Show Less..." : "See All..."}
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
