@@ -1,5 +1,6 @@
 "use client";
 import { useState, useMemo } from "react";
+import ReactMarkdown from "react-markdown";
 import {
   useShowFeedDataQuery,
   useShowListFeedDataQuery,
@@ -29,8 +30,14 @@ function DashboardFeed() {
     return ["All categories", ...catNames];
   }, [categoryData]);
 
+  const convertSourcesToLinks = (text = "") => {
+    return text.replace(
+      /source:\s*(https?:\/\/[^\s]+)/gi,
+      (match, url) => `[source: ${url}](${url})`,
+    );
+  };
+
   const posts = useMemo(() => {
-    // এখানে ভুল ছিল → results.map করা হয়েছিল কিন্তু results ডিফাইন করা হয়নি
     const rawPosts = feedResponse?.results || [];
 
     return rawPosts.map((post) => ({
@@ -257,21 +264,101 @@ function DashboardFeed() {
 
                   <div className="flex gap-6">
                     <div className="flex-1">
-                      <p className="text-gray-700 leading-relaxed text-sm">
-                        {expandedPosts.has(post.id)
-                          ? post.fullContent
-                          : post.content}
-                        {post.fullContent.length > 200 && (
-                          <button
-                            onClick={() => handleReadMore(post.id)}
-                            className="text-blue-600 font-medium ml-2 hover:underline"
-                          >
-                            {expandedPosts.has(post.id)
-                              ? "Show less"
-                              : "Read more"}
-                          </button>
-                        )}
-                      </p>
+                      <div className="text-gray-700 leading-relaxed text-sm prose prose-sm max-w-none">
+                        <ReactMarkdown
+                          components={{
+                            h1: ({ node, ...props }) => (
+                              <h1
+                                className="text-2xl font-bold my-3 text-gray-900"
+                                {...props}
+                              />
+                            ),
+                            h2: ({ node, ...props }) => (
+                              <h2
+                                className="text-xl font-bold my-2.5 text-gray-900"
+                                {...props}
+                              />
+                            ),
+                            h3: ({ node, ...props }) => (
+                              <h3
+                                className="text-lg font-bold my-2 text-gray-900"
+                                {...props}
+                              />
+                            ),
+                            p: ({ node, ...props }) => (
+                              <p className="my-2 text-gray-700" {...props} />
+                            ),
+                            ul: ({ node, ...props }) => (
+                              <ul
+                                className="list-disc list-inside my-2 text-gray-700 space-y-1"
+                                {...props}
+                              />
+                            ),
+                            ol: ({ node, ...props }) => (
+                              <ol
+                                className="list-decimal list-inside my-2 text-gray-700 space-y-1"
+                                {...props}
+                              />
+                            ),
+                            li: ({ node, ...props }) => (
+                              <li className="text-gray-700" {...props} />
+                            ),
+                            a: ({ node, ...props }) => (
+                              <a
+                                className="text-blue-600 hover:underline"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                {...props}
+                              />
+                            ),
+                            a: ({ node, ...props }) => (
+                              <a
+                                {...props}
+                                className="text-blue-600 hover:underline"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              />
+                            ),
+                            code: ({ node, inline, ...props }) =>
+                              inline ? (
+                                <code
+                                  className="bg-gray-100 px-2 py-1 rounded text-red-600 font-mono text-xs"
+                                  {...props}
+                                />
+                              ) : (
+                                <code
+                                  className="bg-gray-100 p-3 rounded block my-2 text-gray-800 font-mono text-xs overflow-x-auto"
+                                  {...props}
+                                />
+                              ),
+                            blockquote: ({ node, ...props }) => (
+                              <blockquote
+                                className="border-l-4 border-gray-300 pl-4 my-2 italic text-gray-600"
+                                {...props}
+                              />
+                            ),
+                            hr: ({ node, ...props }) => (
+                              <hr className="my-3 border-gray-300" {...props} />
+                            ),
+                          }}
+                        >
+                          {convertSourcesToLinks(
+                            expandedPosts.has(post.id)
+                              ? post.fullContent
+                              : post.content,
+                          )}
+                        </ReactMarkdown>
+                      </div>
+                      {post.fullContent.length > 200 && (
+                        <button
+                          onClick={() => handleReadMore(post.id)}
+                          className="text-blue-600 font-medium mt-3 hover:underline"
+                        >
+                          {expandedPosts.has(post.id)
+                            ? "Show less"
+                            : "Read more"}
+                        </button>
+                      )}
                     </div>
                     {post.hasImage && (
                       <div className="flex-shrink-0">

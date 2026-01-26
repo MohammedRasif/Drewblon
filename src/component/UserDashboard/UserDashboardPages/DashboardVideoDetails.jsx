@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, use } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   useShowAllVideoDetailsQuery,
@@ -84,6 +84,9 @@ function DashboardVideoDetails() {
 
   const videos = playlistData?.videos || [];
   const currentVideo = videos[activeLesson];
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
 
   // Helper function to construct full video URL
   const getVideoUrl = (videoFile) => {
@@ -95,10 +98,10 @@ function DashboardVideoDetails() {
   // Helper function to get YouTube embed URL
   const getYouTubeEmbedUrl = (url) => {
     if (!url) return null;
-    
+
     // Extract video ID from various YouTube URL formats
     let videoId = null;
-    
+
     if (url.includes("youtube.com/watch?v=")) {
       videoId = url.split("v=")[1]?.split("&")[0];
     } else if (url.includes("youtu.be/")) {
@@ -106,15 +109,16 @@ function DashboardVideoDetails() {
     } else if (url.includes("youtube.com/embed/")) {
       videoId = url.split("embed/")[1]?.split("?")[0];
     }
-    
+
     if (videoId) {
       return `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0`;
     }
-    
+
     return null;
   };
 
-  const isYouTubeVideo = currentVideo?.source_type === "youtube" && currentVideo?.yt_video_url;
+  const isYouTubeVideo =
+    currentVideo?.source_type === "youtube" && currentVideo?.yt_video_url;
 
   const togglePlay = () => {
     if (isYouTubeVideo) {
@@ -164,7 +168,7 @@ function DashboardVideoDetails() {
 
   const handleProgressClick = (e) => {
     if (isYouTubeVideo) return; // Can't control YouTube progress
-    
+
     if (videoRef.current && duration) {
       const rect = e.currentTarget.getBoundingClientRect();
       const pos = (e.clientX - rect.left) / rect.width;
@@ -174,7 +178,7 @@ function DashboardVideoDetails() {
 
   const handleVolumeChange = (e) => {
     if (isYouTubeVideo) return; // Can't control YouTube volume
-    
+
     const newVolume = parseFloat(e.target.value);
     setVolume(newVolume);
     if (videoRef.current) {
@@ -242,7 +246,10 @@ function DashboardVideoDetails() {
                 {/* Loading Bar */}
                 {isLoading && !isYouTubeVideo && (
                   <div className="absolute top-0 left-0 right-0 h-1 bg-gray-700 z-10">
-                    <div className="h-full bg-blue-600 animate-pulse" style={{ width: '100%' }}>
+                    <div
+                      className="h-full bg-blue-600 animate-pulse"
+                      style={{ width: "100%" }}
+                    >
                       <div className="h-full bg-gradient-to-r from-transparent via-blue-400 to-transparent animate-shimmer"></div>
                     </div>
                   </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   useShowVideoTopicDataQuery,
@@ -21,24 +21,27 @@ function DashboardVideos() {
     error: categoryError,
   } = useShowVideoTopicQuery(id);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+
   const {
     data: videoTopic,
     isLoading: topicLoading,
     error: topicError,
   } = useShowVideoTopicDataQuery(id);
 
-  // Query for all playlists in the category
   const {
     data: allPlaylists,
     isLoading: allPlaylistsLoading,
   } = useShowVideoAllPlaylistsQuery(id);
 
-  // Query for topic-filtered playlists
   const {
     data: topicPlaylists,
     isLoading: topicPlaylistsLoading,
   } = useShowVideoPlaylistsByTopicQuery(selectedTopicId, {
-    skip: !selectedTopicId, // Skip query if no topic is selected
+    skip: !selectedTopicId, 
   });
 
   const categories = useMemo(() => {
@@ -53,7 +56,6 @@ function DashboardVideos() {
     return cats;
   }, [videoCategory]);
 
-  // Handle category click
   const handleCategoryClick = (category) => {
     setActiveCategory(category);
 
@@ -71,14 +73,11 @@ function DashboardVideos() {
     }
   };
 
-  // Get playlists to display
   const getPlaylists = () => {
     if (activeCategory === "All topics") {
-      // Return all playlists for the category
       if (!allPlaylists?.results) return [];
       return allPlaylists.results || [];
     }
-    // When a specific topic is selected, use the topic-filtered playlists from API
     if (selectedTopicId && topicPlaylists?.results) {
       return topicPlaylists.results;
     }
@@ -96,7 +95,6 @@ function DashboardVideos() {
     return playlists.slice(3, 6);
   }, [playlists]);
 
-  // Loading state
   if (categoryLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -111,7 +109,6 @@ function DashboardVideos() {
     );
   }
 
-  // Error state
   if (categoryError) {
     return (
       <div className="bg-gray-50 pr-5 pb-10 min-h-screen flex items-center justify-center">
